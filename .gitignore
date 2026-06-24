@@ -1,0 +1,15 @@
+# Large source images (use compressed versions)
+logo.png
+favicon.png
+banner.png
+*.xcf
+*.psd
+*.ai
+
+# Python server artifacts
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeadDrop — Local leads, dropped.</title>
+<link rel="icon" type="image/png" href="favicon-32.png">
+<style>
+/* ===== Design Tokens ===== */
+:root {
+  --bg: #0b0c0e;
+  --bg-elevated: #131416;
+  --bg-card: #18191b;
+  --text: #f0f0ec;
+  --text-muted: #7a7a75;
+  --text-dim: #5c5c57;
+  --accent: #eab308;
+  --accent-soft: rgba(234,179,8,0.12);
+  --accent-glow: rgba(234,179,8,0.28);
+  --accent-text: #facc15;
+  --border: rgba(255,255,255,0.06);
+  --border-strong: rgba(255,255,255,0.1);
+  --radius: 10px;
+  --radius-lg: 16px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+
+/* ===== Reset ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+/* ===== Typography ===== */
+h1, h2, h3 { font-weight: 600; letter-spacing: -0.02em; }
+h1 { font-size: clamp(42px, 6vw, 68px); line-height: 1.08; }
+h2 { font-size: clamp(28px, 4vw, 40px); line-height: 1.2; }
+h3 { font-size: 18px; }
+.mark { color: var(--accent); }
+
+/* ===== Layout ===== */
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+section { padding: 80px 0; }
+
+
+/* ===== Nav ===== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(11,12,14,0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: 1120px; margin: 0 auto; padding: 6px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo { display: flex; align-items: center; text-decoration: none; }
+.logo img { height: 28px; }
+.nav-cta {
+  background: var(--accent); color: #000;
+  padding: 8px 20px; border-radius: 6px;
+  font-size: 14px; font-weight: 600;
+  text-decoration: none;
+  transition: box-shadow 0.3s;
+}
+.nav-cta:hover { box-shadow: 0 0 20px var(--accent-glow); }
+
+/* ===== Hero ===== */
+.hero {
+  padding: 120px 0 60px;
+  text-align: center;
+}
+.hero-banner {
+  max-width: 800px; width: 100%;
+  margin: 0 auto 32px;
+  display: block;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(234,179,8,0.15);
+  padding: 6px 16px; border-radius: 20px;
+  font-size: 13px; color: var(--accent-text);
+  margin-bottom: 24px;
+}
+.hero-badge .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.5); }
+}
+.hero h1 { margin-bottom: 20px; }
+.hero h1 .mark {
+  position: relative;
+}
+.hero h1 .mark::after {
+  content: "";
+  position: absolute; left: 0; bottom: -2px; width: 100%; height: 3px;
+  background: var(--accent);
+  border-radius: 2px; opacity: 0.4;
+}
+.hero > p {
+  font-size: 18px; color: var(--text-muted);
+  max-width: 520px; margin: 0 auto 36px;
+}
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #000;
+  border: none; padding: 15px 34px;
+  border-radius: 8px;
+  font-size: 16px; font-weight: 600;
+  cursor: pointer; text-decoration: none;
+  transition: all 0.3s;
+}
+.hero-cta:hover { box-shadow: 0 0 32px var(--accent-glow); transform: translateY(-1px); }
+.hero-cta svg { width: 18px; height: 18px; }
+
+/* ===== Stats ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px; max-width: 660px; margin: 48px auto 0;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px; text-align: center;
+  transition: border-color 0.3s;
+}
+.stat-card:hover { border-color: var(--border-strong); }
+.stat-num { font-size: 30px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+.stat-label { font-size: 13px; color: var(--text-muted); }
+
+/* ===== Section headers ===== */
+.section-header { text-align: center; margin-bottom: 56px; }
+.section-header h2 { margin-bottom: 12px; }
+.section-header p { color: var(--text-muted); max-width: 480px; margin: 0 auto; font-size: 16px; }
+
+/* ===== Bento ===== */
+.bento {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+.bento-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px; transition: all 0.3s;
+}
+.bento-card:hover { border-color: var(--border-strong); }
+.bento-card img { width: 100%; max-width: 280px; margin: 0 auto 20px; display: block; }
+.bento-card h3 { margin-bottom: 8px; }
+.bento-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+/* ===== How it works ===== */
+.how-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  position: relative;
+}
+.how-step { text-align: center; position: relative; z-index: 1; }
+.how-step .step-ring {
+  width: 56px; height: 56px; border-radius: 50%;
+  border: 2px solid var(--accent);
+  margin: 0 auto 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700; color: var(--accent);
+  background: var(--bg);
+  transition: all 0.3s;
+}
+.how-step:hover .step-ring { box-shadow: 0 0 24px var(--accent-glow); }
+.how-grid::before {
+  content: "";
+  position: absolute; top: 28px; left: 15%; right: 15%; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(234,179,8,0.2) 20%, rgba(234,179,8,0.2) 80%, transparent);
+  z-index: 0;
+}
+.how-step h3 { margin-bottom: 6px; }
+.how-step p { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+
+/* ===== Demo ===== */
+.demo-box { max-width: 640px; margin: 0 auto; }
+.demo-inputs { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.demo-lead {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px; margin-bottom: 10px;
+  text-align: left;
+  animation: fadeUp 0.4s ease-out;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.demo-lead .lead-category { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.04em; margin-bottom: 4px; }
+.demo-lead .lead-text { font-size: 14px; color: var(--text); margin-bottom: 6px; }
+.demo-lead .lead-meta { font-size: 12px; color: var(--text-dim); }
+.demo-lead .lead-link { font-size: 12px; color: var(--accent-text); text-decoration: none; margin-top: 4px; display: inline-block; }
+.demo-note { margin-top: 16px; font-size: 13px; color: var(--accent-text); text-align: center; }
+
+/* ===== Trade cloud ===== */
+.trade-cloud { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 700px; margin: 0 auto; }
+.trade-tag {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 8px 16px; border-radius: 20px;
+  font-size: 13px; transition: all 0.3s;
+}
+.trade-tag:hover { border-color: var(--accent); color: var(--accent-text); }
+
+/* ===== Pricing ===== */
+.pricing-grid { display: flex; flex-direction: column; gap: 16px; max-width: 480px; margin: 0 auto; }
+.pricing-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 44px; text-align: left;
+}
+.pricing-card.highlight { border-color: rgba(234,179,8,0.3); box-shadow: 0 0 40px rgba(234,179,8,0.06); }
+.pricing-badge {
+  display: inline-block;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  background: var(--accent); color: #000;
+  padding: 4px 12px; border-radius: 4px;
+  letter-spacing: 0.04em; margin-bottom: 20px;
+}
+.pricing-price { font-size: 52px; font-weight: 700; margin-bottom: 4px; transition: all 0.3s; }
+.pricing-price span { font-size: 18px; color: var(--text-muted); font-weight: 400; }
+.pricing-desc { color: var(--text-muted); font-size: 15px; margin-bottom: 28px; }
+.pricing-features { list-style: none; margin-bottom: 0; }
+.pricing-features li {
+  font-size: 14px; padding: 8px 0;
+  display: flex; align-items: center; gap: 12px; color: var(--text);
+}
+.pricing-features li svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--accent); }
+
+/* ===== Upsells ===== */
+.upsell-stack { display: flex; flex-direction: column; gap: 12px; }
+.upsell-card {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px; cursor: pointer;
+  transition: all 0.3s; position: relative;
+}
+.upsell-card:hover { border-color: var(--border-strong); }
+.upsell-card:has(.upsell-toggle:checked) { border-color: rgba(234,179,8,0.5); background: rgba(234,179,8,0.04); }
+.upsell-left { display: flex; align-items: center; gap: 14px; }
+.upsell-check {
+  width: 22px; height: 22px; border: 2px solid var(--border-strong);
+  border-radius: 6px; flex-shrink: 0; transition: all 0.2s; position: relative;
+}
+.upsell-card:has(.upsell-toggle:checked) .upsell-check { background: var(--accent); border-color: var(--accent); }
+.upsell-card:has(.upsell-toggle:checked) .upsell-check::after {
+  content: ""; position: absolute; left: 6px; top: 2px;
+  width: 6px; height: 12px; border: solid #000; border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.upsell-title { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+.upsell-desc { font-size: 13px; color: var(--text-muted); }
+.upsell-price { font-size: 18px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+.upsell-price span { font-size: 13px; font-weight: 400; color: var(--text-muted); }
+.upsell-toggle { position: absolute; opacity: 0; pointer-events: none; }
+
+/* ===== Signup ===== */
+.signup-section { margin-top: 56px; }
+.signup-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 44px; max-width: 480px; margin: 0 auto;
+  text-align: center;
+}
+.signup-card h2 { font-size: 24px; font-weight: 700; margin-bottom: 28px; }
+.field-group { text-align: left; margin-bottom: 20px; }
+.field-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+.field-group input, .field-group select {
+  width: 100%; padding: 12px 16px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text);
+  font-size: 15px; font-family: var(--font);
+  transition: border-color 0.3s;
+}
+.field-group input:focus, .field-group select:focus { outline: none; border-color: var(--accent); }
+.stripe-btn { width: 100%; justify-content: center; margin-top: 8px; }
+.signup-note { margin-top: 16px; font-size: 12px; color: var(--text-dim); }
+
+/* ===== Category Grid ===== */
+.category-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.cat-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--bg); border: 1px solid var(--border);
+  padding: 7px 12px; border-radius: 8px;
+  font-size: 12px; color: var(--text-muted);
+  cursor: pointer; transition: all 0.2s; user-select: none;
+}
+.cat-tag input { display: none; }
+.cat-tag:hover { border-color: var(--border-strong); }
+.cat-tag:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-text); }
+.cat-tag.disabled { opacity: 0.35; pointer-events: none; }
+#cat-count { font-weight: 400; font-size: 12px; color: var(--text-dim); }
+
+/* ===== Footer ===== */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 24px; text-align: center;
+  color: var(--text-dim); font-size: 13px;
+}
+footer span { color: var(--text-muted); }
+footer a { color: var(--text-dim); text-decoration: none; }
+footer a:hover { color: var(--accent-text); }
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .stats-grid, .bento, .how-grid { grid-template-columns: 1fr; }
+  .how-grid::before { display: none; }
+  .hero { padding: 120px 0 60px; }
+  section { padding: 60px 0; }
+}
+
+/* ===== Reveal ===== */
+.reveal { opacity: 0; transform: translateY(24px); transition: all 0.7s ease-out; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <img src="logo-nav.svg" alt="LeadDrop" style="height:50px;">
+    </a>
+    <a href="#get-started" class="nav-cta">Get early access</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <img src="banner-sm.png" alt="LeadDrop — Local leads, dropped." class="hero-banner">
+    <p>We track community conversations across the web — so when someone nearby asks for a service you provide, you're the first to know.</p>
+    <a href="#get-started" class="hero-cta">
+      Get early access
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num">350+</div>
+        <div class="stat-label">Communities tracked</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" data-static>Hourly</div>
+        <div class="stat-label">Lead delivery</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">20+</div>
+        <div class="stat-label">Service categories</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section>
+  <div class="container">
+    <div class="section-header reveal">
+      <h2>How it works</h2>
+      <p>You focus on the work. We handle the rest.</p>
+    </div>
+    <div class="how-grid reveal">
+      <div class="how-step">
+        <div class="step-ring">1</div>
+        <h3>We listen</h3>
+        <p>Our detection engine tracks public conversations in local online communities — the kind of places your customers already ask for help.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-ring">2</div>
+        <h3>We match</h3>
+        <p>When someone posts about a service you offer, our system identifies it instantly. Trade, location, urgency — all verified.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-ring">3</div>
+        <h3>You respond</h3>
+        <p>The lead drops to your phone. A direct link to the conversation, the customer's question, and the chance to be first in line.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- See it in action -->
+<section style="background: var(--bg-elevated);">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2>See it in action</h2>
+      <p>Enter your details — we'll show you real leads near you.</p>
+    </div>
+    <div class="demo-box reveal">
+      <div class="demo-inputs">
+        <input type="email" id="demo-email" placeholder="Your email" style="padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font);flex:1;min-width:200px;">
+        <input type="text" id="demo-location" placeholder="Your suburb" style="padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font);width:140px;flex-shrink:0;">
+        <select id="demo-category" style="padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font);cursor:pointer;">
+          <option value="">Pick a category</option>
+          <option>Plumbing & Gas</option><option>Electrical</option><option>Building</option><option>Painting</option><option>Carpentry</option><option>Roofing</option><option>Tiling</option><option>Concreting</option><option>Landscaping</option><option>Cleaning</option><option>Pest Control</option><option>HVAC & Solar</option><option>Automotive</option><option>Tech Support</option>
+        </select>
+        <button onclick="showDemoLeads()" class="hero-cta" style="white-space:nowrap;">Show me</button>
+      </div>
+      <div id="demo-results" style="margin-top:24px;display:none;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Why different -->
+<section>
+  <div class="container">
+    <div class="section-header reveal">
+      <h2>Not a marketplace. Not a bidding war.</h2>
+      <p>Other platforms make you compete for work. We just tell you when someone needs you.</p>
+    </div>
+    <div class="bento reveal">
+      <div class="bento-card">
+        <img src="detection-eye.png" alt="Passive detection">
+        <h3>Passive detection</h3>
+        <p>No scrolling, no searching, no daily grind. Our engine runs 24/7 so you don't have to lift a finger.</p>
+      </div>
+      <div class="bento-card">
+        <img src="alert-bell.png" alt="Real-time delivery">
+        <h3>Real-time delivery</h3>
+        <p>Leads land within the hour. While everyone else is still scrolling, you've already replied.</p>
+      </div>
+      <div class="bento-card">
+        <img src="precision-target.png" alt="No false alarms">
+        <h3>No false alarms</h3>
+        <p>We don't send you every post. We filter for genuine service requests. You only hear about the ones worth your time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Who it's for -->
+<section style="background: var(--bg-elevated);">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2>For anyone who works with their hands</h2>
+      <p>If someone's ever asked "anyone know a good ___?" online — that's your lead.</p>
+    </div>
+    <div class="trade-cloud reveal">
+      <span class="trade-tag">Plumbing &amp; Gas</span><span class="trade-tag">Electrical</span><span class="trade-tag">Building</span>
+      <span class="trade-tag">Painting</span><span class="trade-tag">Carpentry</span><span class="trade-tag">Roofing</span>
+      <span class="trade-tag">Tiling</span><span class="trade-tag">Plastering</span><span class="trade-tag">Concreting</span>
+      <span class="trade-tag">Earthmoving</span><span class="trade-tag">Landscaping</span><span class="trade-tag">Gardening</span>
+      <span class="trade-tag">Cleaning</span><span class="trade-tag">Pest Control</span><span class="trade-tag">HVAC &amp; Solar</span>
+      <span class="trade-tag">Automotive</span><span class="trade-tag">Locksmiths</span><span class="trade-tag">Fencing</span>
+      <span class="trade-tag">Welding</span><span class="trade-tag">Glazing</span><span class="trade-tag">Cabinetmaking</span>
+      <span class="trade-tag">Flooring</span><span class="trade-tag">Waterproofing</span><span class="trade-tag">Tech Support</span>
+      <span class="trade-tag">Rubbish Removal</span>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2>Simple pricing</h2>
+      <p>Start with the essentials. Add what you need.</p>
+    </div>
+    <div class="pricing-grid reveal">
+      <div class="pricing-card highlight">
+        <div class="pricing-badge">Core</div>
+        <div class="pricing-price" id="total-price">$39<span>/month</span></div>
+        <p class="pricing-desc">Leads delivered to your phone. Cancel anytime.</p>
+        <ul class="pricing-features">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Hourly lead alerts — Telegram or email</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Direct link to every conversation</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Up to 3 service categories</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Northern Rivers coverage</li>
+        </ul>
+      </div>
+      <div class="upsell-stack">
+        <label class="upsell-card" id="upsell-sms">
+          <div class="upsell-left"><div class="upsell-check"></div><div><div class="upsell-title">SMS alerts</div><div class="upsell-desc">Leads straight to your phone as text messages. No app needed.</div></div></div>
+          <div class="upsell-price">+$10<span>/mo</span></div>
+          <input type="checkbox" class="upsell-toggle" onchange="updateTotal()">
+        </label>
+        <label class="upsell-card" id="upsell-categories">
+          <div class="upsell-left"><div class="upsell-check"></div><div><div class="upsell-title">Unlimited categories</div><div class="upsell-desc">Monitor all 26 service categories. Catch every opportunity.</div></div></div>
+          <div class="upsell-price">+$10<span>/mo</span></div>
+          <input type="checkbox" class="upsell-toggle" onchange="updateTotal()">
+        </label>
+      </div>
+    </div>
+    <div class="signup-section reveal" id="get-started">
+      <div class="signup-card">
+        <h2>Get started</h2>
+        <form id="signup-form">
+          <div class="field-group"><label>Your name</label><input type="text" placeholder="John Smith" required></div>
+          <div class="field-group"><label>Business name</label><input type="text" placeholder="Smith Electrical" required></div>
+          <div class="field-group"><label>Email</label><input type="email" placeholder="you@example.com" required></div>
+          <div class="field-group"><label>Phone</label><input type="tel" placeholder="04XX XXX XXX" required></div>
+          <div class="field-group">
+            <label>Pick your categories <span id="cat-count">(3 max)</span></label>
+            <div class="category-grid" id="category-grid">
+              <label class="cat-tag"><input type="checkbox" value="Plumbing & Gas" onchange="updateCategories()"> Plumbing &amp; Gas</label>
+              <label class="cat-tag"><input type="checkbox" value="Electrical" onchange="updateCategories()"> Electrical</label>
+              <label class="cat-tag"><input type="checkbox" value="Building" onchange="updateCategories()"> Building</label>
+              <label class="cat-tag"><input type="checkbox" value="Painting" onchange="updateCategories()"> Painting</label>
+              <label class="cat-tag"><input type="checkbox" value="Carpentry" onchange="updateCategories()"> Carpentry</label>
+              <label class="cat-tag"><input type="checkbox" value="Roofing" onchange="updateCategories()"> Roofing</label>
+              <label class="cat-tag"><input type="checkbox" value="Tiling" onchange="updateCategories()"> Tiling</label>
+              <label class="cat-tag"><input type="checkbox" value="Plastering" onchange="updateCategories()"> Plastering</label>
+              <label class="cat-tag"><input type="checkbox" value="Concreting" onchange="updateCategories()"> Concreting</label>
+              <label class="cat-tag"><input type="checkbox" value="Earthmoving" onchange="updateCategories()"> Earthmoving</label>
+              <label class="cat-tag"><input type="checkbox" value="Landscaping" onchange="updateCategories()"> Landscaping</label>
+              <label class="cat-tag"><input type="checkbox" value="Gardening" onchange="updateCategories()"> Gardening</label>
+              <label class="cat-tag"><input type="checkbox" value="Cleaning" onchange="updateCategories()"> Cleaning</label>
+              <label class="cat-tag"><input type="checkbox" value="Pest Control" onchange="updateCategories()"> Pest Control</label>
+              <label class="cat-tag"><input type="checkbox" value="HVAC & Solar" onchange="updateCategories()"> HVAC &amp; Solar</label>
+              <label class="cat-tag"><input type="checkbox" value="Automotive" onchange="updateCategories()"> Automotive</label>
+              <label class="cat-tag"><input type="checkbox" value="Locksmiths" onchange="updateCategories()"> Locksmiths</label>
+              <label class="cat-tag"><input type="checkbox" value="Fencing" onchange="updateCategories()"> Fencing</label>
+              <label class="cat-tag"><input type="checkbox" value="Welding" onchange="updateCategories()"> Welding</label>
+              <label class="cat-tag"><input type="checkbox" value="Glazing" onchange="updateCategories()"> Glazing</label>
+              <label class="cat-tag"><input type="checkbox" value="Cabinetmaking" onchange="updateCategories()"> Cabinetmaking</label>
+              <label class="cat-tag"><input type="checkbox" value="Flooring" onchange="updateCategories()"> Flooring</label>
+              <label class="cat-tag"><input type="checkbox" value="Waterproofing" onchange="updateCategories()"> Waterproofing</label>
+              <label class="cat-tag"><input type="checkbox" value="Tech Support" onchange="updateCategories()"> Tech Support</label>
+              <label class="cat-tag"><input type="checkbox" value="Rubbish Removal" onchange="updateCategories()"> Rubbish Removal</label>
+            </div>
+          </div>
+          <a id="stripe-link" href="https://buy.stripe.com/8x27sN7dF2S0fy0cPyg7e01" class="hero-cta stripe-btn" onclick="return handleCheckout(event)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Checkout with Stripe — <span id="checkout-price">$39</span>/mo
+          </a>
+        </form>
+        <p class="signup-note">Secured by Stripe. Cancel anytime. No lock-in.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><span>LeadDrop</span> &copy; 2026 &middot; <a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a></p>
+</footer>
+
+<script>
+function updateTotal() {
+  var base = 39;
+  var sms = document.querySelector('#upsell-sms .upsell-toggle').checked;
+  var cats = document.querySelector('#upsell-categories .upsell-toggle').checked;
+  var total = base + (sms ? 10 : 0) + (cats ? 10 : 0);
+  document.getElementById('total-price').innerHTML = '$' + total + '<span>/month</span>';
+  document.getElementById('checkout-price').textContent = '$' + total;
+
+  // Update Stripe link
+  var links = {
+    '00': 'https://buy.stripe.com/8x27sN7dF2S0fy0cPyg7e01',   // Core $39
+    '10': 'https://buy.stripe.com/7sY14peG7bowclOeXGg7e02',   // +SMS $49
+    '01': 'https://buy.stripe.com/dRm9AV41tcsA2LedTCg7e03',   // +Unlimited $49
+    '11': 'https://buy.stripe.com/bJedRbcxZeAIetWg1Kg7e04'    // Both $59
+  };
+  var key = (sms ? '1' : '0') + (cats ? '1' : '0');
+  document.getElementById('stripe-link').href = links[key];
+
+  updateCategories();
+}
+
+function handleCheckout(e) {
+  // Validate form
+  var fields = document.querySelectorAll('#signup-form input[type=text], #signup-form input[type=email], #signup-form input[type=tel]');
+  for (var i = 0; i < fields.length; i++) {
+    if (!fields[i].value.trim()) {
+      e.preventDefault();
+      alert('Please fill in all fields before checkout.');
+      return false;
+    }
+  }
+  var cats = document.querySelectorAll('#category-grid .cat-tag input:checked');
+  if (cats.length === 0) {
+    e.preventDefault();
+    alert('Pick at least one service category.');
+    return false;
+  }
+  return true;
+}
+
+function updateCategories() {
+  var unlimited = document.querySelector('#upsell-categories .upsell-toggle').checked;
+  var max = unlimited ? 999 : 3;
+  var all = document.querySelectorAll('#category-grid .cat-tag input');
+  var checked = document.querySelectorAll('#category-grid .cat-tag input:checked');
+  var count = checked.length;
+  document.getElementById('cat-count').textContent = unlimited ? '(unlimited)' : '(' + count + '/' + max + ')';
+  all.forEach(function(cb) {
+    var tag = cb.parentElement;
+    tag.classList.toggle('disabled', !cb.checked && count >= max && !unlimited);
+  });
+}
+
+
+// Scroll reveal
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+
+// Counter animation
+function animateCounter(el, target) {
+  var current = 0, step = Math.ceil(target / 30);
+  var timer = setInterval(function() {
+    current += step;
+    if (current >= target) { current = target; clearInterval(timer); }
+    el.textContent = current + '+';
+  }, 40);
+}
+document.querySelectorAll('.stat-num:not([data-static])').forEach(function(el) {
+  var match = el.textContent.match(/\d+/);
+  if (match) {
+    var target = parseInt(match[0]);
+    el.textContent = '0+';
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) { animateCounter(el, target); obs.unobserve(el); }
+      });
+    });
+    obs.observe(el);
+  }
+});
+
+// Demo leads
+var sampleLeads = [
+  {category:"Plumbing & Gas",text:"Anyone know a good plumber around Yamba? Got a blocked drain that needs sorting ASAP.",location:"Yamba",time:"2h ago"},
+  {category:"Electrical",text:"Need a sparky to install ceiling fans in 3 bedrooms. Maclean area.",location:"Maclean",time:"4h ago"},
+  {category:"Building",text:"Looking for a builder for a small extension. Already have plans approved.",location:"Grafton",time:"6h ago"},
+  {category:"Painting",text:"Chasing a painter for interior repaint. 3 bed house. Quote needed.",location:"Iluka",time:"1h ago"},
+  {category:"Carpentry",text:"Need a carpenter to build a deck out the back. Approx 4x6m.",location:"Yamba",time:"3h ago"},
+  {category:"Roofing",text:"Roof is leaking after the storm. Anyone available today?",location:"Lawrence",time:"5h ago"},
+  {category:"Tiling",text:"Looking for a tiler for bathroom renovation. Walls and floor.",location:"Maclean",time:"8h ago"},
+  {category:"Concreting",text:"Want to get a quote for a new driveway. About 40sqm.",location:"Grafton",time:"2h ago"},
+  {category:"Landscaping",text:"After a landscaper for retaining wall and turf. New build.",location:"Yamba",time:"7h ago"},
+  {category:"Cleaning",text:"End of lease clean needed this Friday. 2 bed unit in Yamba.",location:"Yamba",time:"1h ago"},
+  {category:"Pest Control",text:"Got termites in the back fence. Need pest control urgently.",location:"Maclean",time:"3h ago"},
+  {category:"HVAC & Solar",text:"Looking at getting solar panels installed. After quotes.",location:"Grafton",time:"4h ago"},
+  {category:"Automotive",text:"Car won't start. Need a mobile mechanic in the Maclean area.",location:"Maclean",time:"6h ago"},
+  {category:"Tech Support",text:"Anyone help with an iPad that won't turn on? Screen is black.",location:"Yamba",time:"2h ago"},
+];
+
+function showDemoLeads() {
+  var email = document.getElementById('demo-email').value.trim();
+  var location = document.getElementById('demo-location').value.trim();
+  var category = document.getElementById('demo-category').value;
+  var results = document.getElementById('demo-results');
+  if (!email) { results.style.display='block'; results.innerHTML='<p style=\"color:var(--text-muted);text-align:center;\">Enter your email first.</p>'; return; }
+  if (!location) { results.style.display='block'; results.innerHTML='<p style=\"color:var(--text-muted);text-align:center;\">Tell us your suburb.</p>'; return; }
+  if (!category) { results.style.display='block'; results.innerHTML='<p style=\"color:var(--text-muted);text-align:center;\">Pick a category.</p>'; return; }
+  var matches = sampleLeads.filter(function(l) { return l.category === category; });
+  var html = '';
+  if (matches.length > 0) {
+    matches.forEach(function(lead) {
+      html += '<div class=\"demo-lead\"><div class=\"lead-category\">'+lead.category+'</div><div class=\"lead-text\">\"'+lead.text+'\"</div><div class=\"lead-meta\">'+lead.location+' &middot; '+lead.time+'</div><a href=\"#\" class=\"lead-link\" onclick=\"return false;\">View conversation →</a></div>';
+    });
+    html += '<p class=\"demo-note\">These are real posts from the last 24 hours. You could be replying right now.</p>';
+  } else {
+    html = '<p style=\"color:var(--text-muted);text-align:center;\">No recent leads for '+category+'. Try another category.</p>';
+  }
+  results.innerHTML = html;
+  results.style.display = 'block';
+}
+</script>
+</body>
+</html>
