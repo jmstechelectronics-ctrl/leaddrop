@@ -1,0 +1,43 @@
+{subject: "New LeadDrop signup — {name} / {categories}"}
+{body:
+<p style="color:#f0f0ec;font-size:18px;margin:0 0 8px;">
+  💰 New subscriber: <strong>{name}</strong>
+</p>
+
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;">
+  <tr>
+    <td style="padding:8px 12px;background:#18191b;border-radius:4px;">
+      <span style="color:#5c5c57;font-size:12px;">Business</span><br>
+      <span style="color:#f0f0ec;font-size:14px;">{business_name}</span>
+    </td>
+  </tr>
+  <tr><td height="8"></td></tr>
+  <tr>
+    <td style="padding:8px 12px;background:#18191b;border-radius:4px;">
+      <span style="color:#5c5c57;font-size:12px;">Email</span><br>
+      <span style="color:#f0f0ec;font-size:14px;">{email}</span>
+    </td>
+  </tr>
+  <tr><td height="8"></td></tr>
+  <tr>
+    <td style="padding:8px 12px;background:#18191b;border-radius:4px;">
+      <span style="color:#5c5c57;font-size:12px;">Phone</span><br>
+      <span style="color:#f0f0ec;font-size:14px;">{phone}</span>
+    </td>
+  </tr>
+  <tr><td height="8"></td></tr>
+  <tr>
+    <td style="padding:8px 12px;background:#18191b;border-radius:4px;">
+      <span style="color:#5c5c57;font-size:12px;">Categories ({category_count})</span><br>
+      <span style="color:#f0f0ec;font-size:14px;">{categories}</span>
+    </td>
+  </tr>
+  <tr><td height="8"></td></tr>
+  <tr>
+    <td style="padding:8px 12px;background:#18191b;border-radius:4px;">
+      <span style="color:#5c5c57;font-size:12px;">Plan</span><br>
+      <span style="color:#eab308;font-size:14px;font-weight:600;">${amount}/month</span>
+    </td>
+  </tr>
+</table>
+}{/body}
