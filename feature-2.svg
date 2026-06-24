@@ -1,6 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
-  <!-- Real-time delivery: lightning bolt + clock -->
-  <circle cx="32" cy="32" r="28" stroke="#FFD400" stroke-width="2.5"/>
-  <polyline points="32,12 32,32 44,32" stroke="#FFD400" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <polygon points="30,20 24,36 31,36 28,52 40,34 32,34 36,20" fill="#FFD400"/>
+  <!-- Real-time delivery: phone -->
+  <rect x="18" y="4" width="28" height="56" rx="6" stroke="#FFD400" stroke-width="2.5"/>
+  <line x1="24" y1="10" x2="40" y2="10" stroke="#FFD400" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="32" cy="48" r="4" fill="#FFD400"/>
+  <!-- notification dots -->
+  <circle cx="44" cy="8" r="5" fill="#FFD400"/>
+  <line x1="44" y1="5" x2="44" y2="11" stroke="#0d1117" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="44" cy="14" r="1" fill="#0d1117"/>
 </svg>
