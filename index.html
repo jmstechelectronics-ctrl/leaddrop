@@ -409,7 +409,8 @@ footer a:hover { color: var(--accent-text); }
     </div>
     <div class="demo-box reveal">
       <div class="demo-inputs">
-        <input type="email" id="demo-email" placeholder="Your email" style="padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font);flex:1;min-width:200px;">
+        <input type="text" id="demo-name" placeholder="Your name" style="padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font);width:130px;flex-shrink:0;">
+        <input type="email" id="demo-email" placeholder="Your email" style="padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font);flex:1;min-width:180px;">
         <input type="text" id="demo-location" placeholder="Your suburb" style="padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font);width:140px;flex-shrink:0;">
         <select id="demo-category" style="padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font);cursor:pointer;">
           <option value="">Pick a category</option>
@@ -661,18 +662,26 @@ var sampleLeads = [
 ];
 
 function showDemoLeads() {
+  var name = document.getElementById('demo-name').value.trim();
   var email = document.getElementById('demo-email').value.trim();
   var location = document.getElementById('demo-location').value.trim();
   var category = document.getElementById('demo-category').value;
   var results = document.getElementById('demo-results');
-  if (!email) { results.style.display='block'; results.innerHTML='<p style=\"color:var(--text-muted);text-align:center;\">Enter your email first.</p>'; return; }
-  if (!location) { results.style.display='block'; results.innerHTML='<p style=\"color:var(--text-muted);text-align:center;\">Tell us your suburb.</p>'; return; }
-  if (!category) { results.style.display='block'; results.innerHTML='<p style=\"color:var(--text-muted);text-align:center;\">Pick a category.</p>'; return; }
+  if (!name) { results.style.display='block'; results.innerHTML='<p style="color:var(--text-muted);text-align:center;">What should we call you?</p>'; return; }
+  if (!email) { results.style.display='block'; results.innerHTML='<p style="color:var(--text-muted);text-align:center;">Enter your email first.</p>'; return; }
+  if (!location) { results.style.display='block'; results.innerHTML='<p style="color:var(--text-muted);text-align:center;">Tell us your suburb.</p>'; return; }
+  if (!category) { results.style.display='block'; results.innerHTML='<p style="color:var(--text-muted);text-align:center;">Pick a category.</p>'; return; }
+  // Notify us of the demo request
+  fetch('https://sapphireagent.com.au/api/leaddrop-demo', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({name:name, email:email, location:location, category:category, source:'demo-form'})
+  }).catch(function(){});
   var matches = sampleLeads.filter(function(l) { return l.category === category; });
   var html = '';
   if (matches.length > 0) {
     matches.forEach(function(lead) {
-      html += '<div class=\"demo-lead\"><div class=\"lead-category\">'+lead.category+'</div><div class=\"lead-text\">\"'+lead.text+'\"</div><div class=\"lead-meta\">'+lead.location+' &middot; '+lead.time+'</div><a href=\"#\" class=\"lead-link\" onclick=\"return false;\">View conversation →</a></div>';
+      html += '<div class="demo-lead"><div class="lead-category">'+lead.category+'</div><div class="lead-text">"'+lead.text+'"</div><div class="lead-meta">'+lead.location+' &middot; '+lead.time+'</div></div>';
     });
     html += '<p class=\"demo-note\">These are real posts from the last 24 hours. You could be replying right now.</p>';
   } else {
