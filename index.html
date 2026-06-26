@@ -359,6 +359,15 @@ footer a:hover { color: var(--accent-text); }
 <body>
 
 <nav>
+  <!-- EOFY Sale Banner -->
+  <div style="background:#131416;text-align:center;padding:8px 20px;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;font-size:12px;font-weight:600;border-bottom:1px solid rgba(234,179,8,0.15);">
+    <span style="color:#eab308;">⚡ <strong>EOFY SALE — 4 DAYS LEFT</strong></span>
+    <span style="color:#7a7a75;margin-left:12px;">
+      <span style="text-decoration:line-through;">25% off</span> &nbsp;
+      <span style="color:#f0f0ec;background:rgba(234,179,8,0.12);padding:2px 8px;border-radius:4px;">20% off — few spots</span> &nbsp;
+      <span>10% off</span>
+    </span>
+  </div>
   <div class="nav-inner">
     <a href="#" class="logo">
       <img src="logo-nav.svg" alt="LeadDrop" style="height:50px;">
@@ -504,7 +513,8 @@ footer a:hover { color: var(--accent-text); }
     <div class="pricing-grid reveal">
       <div class="pricing-card highlight">
         <div class="pricing-badge">Core</div>
-        <div class="pricing-price" id="total-price">$39<span>/month</span></div>
+        <div class="pricing-price" id="total-price">$31<span>/month</span></div>
+        <p class="pricing-desc"><span style="text-decoration:line-through;color:var(--text-dim);">$39</span> <span style="color:var(--accent);font-weight:600;">EOFY Sale — 20% off</span></p>
         <p class="pricing-desc">Leads delivered to your phone. Cancel anytime.</p>
         <ul class="pricing-features">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Hourly lead alerts — Telegram or email</li>
@@ -566,7 +576,7 @@ footer a:hover { color: var(--accent-text); }
           </div>
           <a id="stripe-link" href="https://buy.stripe.com/8x27sN7dF2S0fy0cPyg7e01" class="hero-cta stripe-btn" onclick="return handleCheckout(event)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            Checkout with Stripe — <span id="checkout-price">$39</span>/mo
+            Checkout with Stripe — <span id="checkout-price">$31</span>/mo
           </a>
         </form>
         <p class="signup-note">Secured by Stripe. Cancel anytime. No lock-in.</p>
@@ -597,7 +607,7 @@ footer a:hover { color: var(--accent-text); }
 
 <script>
 function updateTotal() {
-  var base = 39;
+  var base = 31;
   var sms = document.querySelector('#upsell-sms .upsell-toggle').checked;
   var cats = document.querySelector('#upsell-categories .upsell-toggle').checked;
   var total = base + (sms ? 10 : 0) + (cats ? 10 : 0);
@@ -606,10 +616,10 @@ function updateTotal() {
 
   // Update Stripe link
   var links = {
-    '00': 'https://buy.stripe.com/8x27sN7dF2S0fy0cPyg7e01',   // Core $39
-    '10': 'https://buy.stripe.com/7sY14peG7bowclOeXGg7e02',   // +SMS $49
-    '01': 'https://buy.stripe.com/dRm9AV41tcsA2LedTCg7e03',   // +Unlimited $49
-    '11': 'https://buy.stripe.com/bJedRbcxZeAIetWg1Kg7e04'    // Both $59
+    '00': 'https://buy.stripe.com/14AdRbcxZ8ck99CaHqg7e05',   // Core $31 EOFY
+    '10': 'https://buy.stripe.com/cNicN7eG7gIQ5Xq02Mg7e06',   // +SMS $41
+    '01': 'https://buy.stripe.com/9B628t7dFcsAbhK4j2g7e07',   // +Unlimited $41
+    '11': 'https://buy.stripe.com/9B600l41tbowetWaHqg7e08'    // Both $51
   };
   var key = (sms ? '1' : '0') + (cats ? '1' : '0');
   document.getElementById('stripe-link').href = links[key];
