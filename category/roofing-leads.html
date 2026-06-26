@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeadDrop — Roofing leads in the Northern Rivers — be first on the roof</title>
+<meta name="description" content="Storm damage, leaks, replacements. Our engine catches roofing requests the moment they're posted in local groups.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://leaddrop.com.au/roofing-leads/">
+<meta property="og:title" content="LeadDrop — Roofing leads in the Northern Rivers — be first on the roof">
+<meta property="og:description" content="Storm damage, leaks, replacements. Our engine catches roofing requests the moment they're posted in local groups.">
+<meta property="og:url" content="https://leaddrop.com.au/roofing-leads/">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/png" href="/favicon-32.png">
+<style>
+:root {
+  --bg: #0b0c0e; --bg-elevated: #131416; --bg-card: #18191b;
+  --text: #f0f0ec; --text-muted: #7a7a75; --text-dim: #5c5c57;
+  --accent: #eab308; --accent-soft: rgba(234,179,8,0.12);
+  --accent-glow: rgba(234,179,8,0.28); --accent-text: #facc15;
+  --border: rgba(255,255,255,0.06); --border-strong: rgba(255,255,255,0.1);
+  --radius: 10px; --radius-lg: 16px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+* { margin:0;padding:0;box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:var(--font); background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; line-height:1.5; }
+h1,h2,h3 { font-weight:600; letter-spacing:-0.02em; }
+h1 { font-size:clamp(36px,5vw,56px); line-height:1.1; }
+h2 { font-size:clamp(24px,3.5vw,34px); line-height:1.2; }
+h3 { font-size:16px; }
+.mark { color:var(--accent); }
+.container { max-width:960px; margin:0 auto; padding:0 24px; }
+section { padding:64px 0; }
+
+/* Nav */
+nav {
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(11,12,14,0.85); backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner { max-width:960px; margin:0 auto; padding:10px 24px; display:flex; align-items:center; justify-content:space-between; }
+.nav-logo { text-decoration:none; }
+.nav-logo img { height:32px; }
+.nav-cta {
+  background:var(--accent); color:#000; padding:8px 18px; border-radius:6px;
+  font-size:13px; font-weight:600; text-decoration:none; transition:box-shadow 0.3s;
+}
+.nav-cta:hover { box-shadow:0 0 20px var(--accent-glow); }
+
+/* Hero */
+.hero { padding:120px 0 48px; }
+.hero-tag { display:inline-block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent); background:var(--accent-soft); padding:4px 12px; border-radius:4px; margin-bottom:20px; }
+.hero h1 { margin-bottom:16px; }
+.hero p { font-size:17px; color:var(--text-muted); max-width:580px; margin-bottom:28px; }
+.hero-cta {
+  display:inline-flex; align-items:center; gap:8px; background:var(--accent); color:#000;
+  border:none; padding:14px 30px; border-radius:8px; font-size:15px; font-weight:600;
+  cursor:pointer; text-decoration:none; transition:all 0.3s;
+}
+.hero-cta:hover { box-shadow:0 0 32px var(--accent-glow); transform:translateY(-1px); }
+.hero-cta svg { width:18px;height:18px; }
+
+/* Stats */
+.stats { display:flex; justify-content:center; gap:40px; margin-top:40px; }
+.stat { text-align:center; }
+.stat-num { font-size:28px; font-weight:700; color:var(--accent); }
+.stat-label { font-size:13px; color:var(--text-muted); margin-top:4px; }
+
+/* How it works */
+.how { background:var(--bg-elevated); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+.how-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:32px; text-align:center; position:relative; }
+.how-step { position:relative; z-index:1; }
+.step-num {
+  width:44px;height:44px;border-radius:50%;border:2px solid var(--accent);
+  margin:0 auto 16px;display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:700;color:var(--accent);background:var(--bg);
+}
+.how-step h3 { margin-bottom:6px; font-size:15px; }
+.how-step p { font-size:13px; color:var(--text-muted); line-height:1.5; }
+.how-grid::before {
+  content:""; position:absolute; top:22px; left:18%; right:18%; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(234,179,8,0.2) 20%,rgba(234,179,8,0.2) 80%,transparent);
+  z-index:0;
+}
+
+/* Leads */
+.lead-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;
+  transition:border-color 0.3s;
+}
+.lead-card:hover { border-color:var(--border-strong); }
+.lead-cat { font-size:10px; font-weight:700; text-transform:uppercase; color:var(--accent); letter-spacing:0.05em; margin-bottom:6px; }
+.lead-text { font-size:14px; color:var(--text); margin-bottom:8px; }
+.lead-meta { font-size:12px; color:var(--text-dim); }
+.lead-note { margin-top:20px; font-size:13px; color:var(--accent-text); text-align:center; }
+
+/* Trade tags */
+.trades { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; }
+.trade-tag {
+  background:var(--bg-card); border:1px solid var(--border);
+  color:var(--text-muted); padding:8px 14px; border-radius:20px;
+  font-size:12px; text-decoration:none; transition:all 0.3s;
+}
+.trade-tag:hover { border-color:var(--accent); color:var(--accent-text); }
+
+/* CTA */
+.cta-section { text-align:center; padding:64px 0; }
+.cta-section h2 { margin-bottom:12px; }
+.cta-section p { color:var(--text-muted); margin-bottom:28px; font-size:15px; }
+
+/* Footer */
+footer {
+  border-top:1px solid var(--border); padding:28px 24px; text-align:center;
+  font-size:12px; color:var(--text-dim);
+}
+footer a { color:var(--text-dim); text-decoration:none; }
+footer a:hover { color:var(--accent-text); }
+
+@media (max-width:768px) {
+  .how-grid,.stats { grid-template-columns:1fr; display:flex; flex-direction:column; gap:24px; }
+  .how-grid::before { display:none; }
+  .hero { padding:100px 0 40px; }
+  section { padding:48px 0; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><img src="/logo-nav.svg" alt="LeadDrop"></a>
+    <a href="/#get-started" class="nav-cta">Get early access</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag">Roofing</div>
+    <h1>Roofing leads in the Northern Rivers — be first on the roof</h1>
+    <p>Storm damage, leaks, replacements. Our engine catches roofing requests the moment they're posted in local groups.</p>
+    <a href="/#get-started" class="hero-cta">
+      Get Roofing leads
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+    <div class="stats">
+      <div class="stat"><div class="stat-num">45+</div><div class="stat-label">Communities tracked</div></div>
+      <div class="stat"><div class="stat-num">Hourly</div><div class="stat-label">Lead delivery</div></div>
+      <div class="stat"><div class="stat-num">7</div><div class="stat-label">Leads this week</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="container">
+    <div class="how-grid">
+      <div class="how-step"><div class="step-num">1</div><h3>We listen</h3><p>Our engine tracks public conversations in 45+ local communities — where your customers ask for help.</p></div>
+      <div class="how-step"><div class="step-num">2</div><h3>We match</h3><p>When someone posts about roofing, we flag it. Trade, location, urgency — verified.</p></div>
+      <div class="how-step"><div class="step-num">3</div><h3>You respond</h3><p>The lead drops to your phone. A link to the conversation. Be first in line.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2 style="text-align:center;margin-bottom:8px;">Real roofing leads</h2>
+    <p style="text-align:center;color:var(--text-muted);margin-bottom:40px;font-size:15px;">Here's what our detection engine caught this week.</p>
+    <div class="lead-card">
+          <div class="lead-cat">Roofing</div>
+          <div class="lead-text">"Roof is leaking after the storm. Anyone available today?"</div>
+          <div class="lead-meta">Lawrence &middot; 5h ago</div>
+        </div>
+<div class="lead-card">
+          <div class="lead-cat">Roofing</div>
+          <div class="lead-text">"Need gutters replaced on a 2-storey. Maclean area."</div>
+          <div class="lead-meta">Maclean &middot; 8h ago</div>
+        </div>
+<div class="lead-card">
+          <div class="lead-cat">Roofing</div>
+          <div class="lead-text">"Looking for roofing quotes. Colourbond. New build."</div>
+          <div class="lead-meta">Grafton &middot; 11h ago</div>
+        </div>
+  </div>
+</section>
+
+<section style="background:var(--bg-elevated);">
+  <div class="container">
+    <h2 style="text-align:center;margin-bottom:8px;">Every trade covered</h2>
+    <p style="text-align:center;color:var(--text-muted);margin-bottom:32px;font-size:15px;">We track service requests across 20+ categories.</p>
+    <div class="trades">
+      <a href="/plumbing-leads/" class="trade-tag">Plumbing &amp; Gas</a>
+      <a href="/electrical-leads/" class="trade-tag">Electrical</a>
+      <a href="/building-leads/" class="trade-tag">Building</a>
+      <a href="/painting-leads/" class="trade-tag">Painting</a>
+      <a href="/carpentry-leads/" class="trade-tag">Carpentry</a>
+      <a href="/roofing-leads/" class="trade-tag">Roofing</a>
+      <a href="/tiling-leads/" class="trade-tag">Tiling</a>
+      <a href="/concreting-leads/" class="trade-tag">Concreting</a>
+      <a href="/landscaping-leads/" class="trade-tag">Landscaping</a>
+      <a href="/cleaning-leads/" class="trade-tag">Cleaning</a>
+      <a href="/pest-control-leads/" class="trade-tag">Pest Control</a>
+      <a href="/hvac-leads/" class="trade-tag">HVAC &amp; Solar</a>
+      <a href="/automotive-leads/" class="trade-tag">Automotive</a>
+      <a href="/tech-support-leads/" class="trade-tag">Tech Support</a>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container">
+    <h2>Get roofing leads delivered</h2>
+    <p>$31/month. Cancel anytime. Leads land within the hour.</p>
+    <a href="/#get-started" class="hero-cta">
+      Start getting leads
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div style="max-width:960px;margin:0 auto;">
+    <p><a href="/">LeadDrop</a> &copy; 2026 &middot; <a href="/privacy.html">Privacy</a> &middot; <a href="/terms.html">Terms</a></p>
+    <p style="margin-top:4px;">Local leads for trades &amp; services. Northern Rivers NSW.</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -232,11 +232,13 @@ nav {
 /* ===== Trade cloud ===== */
 .trade-cloud { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 700px; margin: 0 auto; }
 .trade-tag {
+  display: inline-flex; align-items: center; gap: 6px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   color: var(--text-muted);
   padding: 8px 16px; border-radius: 20px;
   font-size: 13px; transition: all 0.3s;
+  text-decoration: none;
 }
 .trade-tag:hover { border-color: var(--accent); color: var(--accent-text); }
 
@@ -492,14 +494,14 @@ footer a:hover { color: var(--accent-text); }
       <p>If someone's ever asked "anyone know a good ___?" online — that's your lead.</p>
     </div>
     <div class="trade-cloud reveal">
-      <span class="trade-tag">Plumbing &amp; Gas</span><span class="trade-tag">Electrical</span><span class="trade-tag">Building</span>
-      <span class="trade-tag">Painting</span><span class="trade-tag">Carpentry</span><span class="trade-tag">Roofing</span>
-      <span class="trade-tag">Tiling</span><span class="trade-tag">Plastering</span><span class="trade-tag">Concreting</span>
-      <span class="trade-tag">Earthmoving</span><span class="trade-tag">Landscaping</span><span class="trade-tag">Gardening</span>
-      <span class="trade-tag">Cleaning</span><span class="trade-tag">Pest Control</span><span class="trade-tag">HVAC &amp; Solar</span>
-      <span class="trade-tag">Automotive</span><span class="trade-tag">Locksmiths</span><span class="trade-tag">Fencing</span>
+      <a href="category/plumbing-leads.html" class="trade-tag">Plumbing &amp; Gas</a><a href="category/electrical-leads.html" class="trade-tag">Electrical</a><a href="category/building-leads.html" class="trade-tag">Building</a>
+      <a href="category/painting-leads.html" class="trade-tag">Painting</a><a href="category/carpentry-leads.html" class="trade-tag">Carpentry</a><a href="category/roofing-leads.html" class="trade-tag">Roofing</a>
+      <a href="category/tiling-leads.html" class="trade-tag">Tiling</a><span class="trade-tag">Plastering</span><a href="category/concreting-leads.html" class="trade-tag">Concreting</a>
+      <span class="trade-tag">Earthmoving</span><a href="category/landscaping-leads.html" class="trade-tag">Landscaping</a><span class="trade-tag">Gardening</span>
+      <a href="category/cleaning-leads.html" class="trade-tag">Cleaning</a><a href="category/pest-control-leads.html" class="trade-tag">Pest Control</a><a href="category/hvac-leads.html" class="trade-tag">HVAC &amp; Solar</a>
+      <a href="category/automotive-leads.html" class="trade-tag">Automotive</a><span class="trade-tag">Locksmiths</span><span class="trade-tag">Fencing</span>
       <span class="trade-tag">Welding</span><span class="trade-tag">Glazing</span><span class="trade-tag">Cabinetmaking</span>
-      <span class="trade-tag">Flooring</span><span class="trade-tag">Waterproofing</span><span class="trade-tag">Tech Support</span>
+      <span class="trade-tag">Flooring</span><span class="trade-tag">Waterproofing</span><a href="category/tech-support-leads.html" class="trade-tag">Tech Support</a>
       <span class="trade-tag">Rubbish Removal</span>
     </div>
   </div>
@@ -590,7 +592,7 @@ footer a:hover { color: var(--accent-text); }
 <footer>
   <div style="max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;">
     <div style="text-align:left;">
-      <p style="margin:0 0 4px;"><span>LeadDrop</span> &copy; 2026 &middot; <a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a></p>
+      <p style="margin:0 0 4px;"><span>LeadDrop</span> &copy; 2026 &middot; <a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a> &middot; <a href="blog/where-tradies-get-leads-2026.html">Blog</a></p>
       <p style="margin:0;font-size:11px;color:var(--text-dim);">ABN 79 773 473 522</p>
     </div>
     <div style="display:flex;align-items:center;gap:16px;">
