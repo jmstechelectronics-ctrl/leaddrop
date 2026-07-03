@@ -18,6 +18,7 @@
 <meta name="twitter:description" content="Real leads from real people asking for services near you. No bidding, no marketplace.">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-76CX8HQWR7"></script>
+<script defer src="real-leads.js"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -361,19 +362,154 @@ nav {
 .stripe-btn { width: 100%; justify-content: center; margin-top: 8px; }
 .signup-note { margin-top: 16px; font-size: 12px; color: var(--text-dim); }
 
-/* ===== Category Grid ===== */
+/* ===== Category Picker ===== */
+.category-picker {
+  background: rgba(255,255,255,0.015);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+}
+.category-picker-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.category-picker-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.category-picker-note {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 4px;
+  text-align: left;
+}
+.category-tray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 16px;
+  min-height: 36px;
+}
+.category-empty {
+  font-size: 13px;
+  color: var(--text-dim);
+  padding: 8px 0;
+}
+.selected-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.selected-chip button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+}
+.category-block + .category-block { margin-top: 14px; }
+.category-block-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.category-block-title h3 {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+.category-block-title span {
+  font-size: 12px;
+  color: var(--text-dim);
+}
 .category-grid { display: flex; flex-wrap: wrap; gap: 8px; }
 .cat-tag {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--bg); border: 1px solid var(--border);
-  padding: 7px 12px; border-radius: 8px;
-  font-size: 12px; color: var(--text-muted);
-  cursor: pointer; transition: all 0.2s; user-select: none;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
 }
-.cat-tag input { display: none; }
-.cat-tag:hover { border-color: var(--border-strong); }
-.cat-tag:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-text); }
-.cat-tag.disabled { opacity: 0.35; pointer-events: none; }
+.cat-tag input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.cat-tag:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+.cat-tag.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+.cat-tag.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+.category-more {
+  margin-top: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.category-more summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.category-more summary::-webkit-details-marker { display: none; }
+.category-more summary::after {
+  content: 'See more';
+  float: right;
+  color: var(--accent-text);
+  font-weight: 600;
+}
+.category-more[open] summary::after { content: 'Hide more'; }
+.category-more-body { margin-top: 12px; }
+.category-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.category-clear {
+  border: 0;
+  background: transparent;
+  color: var(--accent-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
 #cat-count { font-weight: 400; font-size: 12px; color: var(--text-dim); }
 
 /* ===== Footer ===== */
@@ -592,33 +728,32 @@ footer a:hover { color: var(--accent-text); }
           <div class="field-group"><label>Email</label><input type="email" placeholder="you@example.com" required></div>
           <div class="field-group"><label>Phone</label><input type="tel" placeholder="04XX XXX XXX" required></div>
           <div class="field-group">
-            <label>Pick your categories <span id="cat-count">(3 max)</span></label>
-            <div class="category-grid" id="category-grid">
-              <label class="cat-tag"><input type="checkbox" value="Plumbing & Gas" onchange="updateCategories()"> Plumbing &amp; Gas</label>
-              <label class="cat-tag"><input type="checkbox" value="Electrical" onchange="updateCategories()"> Electrical</label>
-              <label class="cat-tag"><input type="checkbox" value="Building" onchange="updateCategories()"> Building</label>
-              <label class="cat-tag"><input type="checkbox" value="Painting" onchange="updateCategories()"> Painting</label>
-              <label class="cat-tag"><input type="checkbox" value="Carpentry" onchange="updateCategories()"> Carpentry</label>
-              <label class="cat-tag"><input type="checkbox" value="Roofing" onchange="updateCategories()"> Roofing</label>
-              <label class="cat-tag"><input type="checkbox" value="Tiling" onchange="updateCategories()"> Tiling</label>
-              <label class="cat-tag"><input type="checkbox" value="Plastering" onchange="updateCategories()"> Plastering</label>
-              <label class="cat-tag"><input type="checkbox" value="Concreting" onchange="updateCategories()"> Concreting</label>
-              <label class="cat-tag"><input type="checkbox" value="Earthmoving" onchange="updateCategories()"> Earthmoving</label>
-              <label class="cat-tag"><input type="checkbox" value="Landscaping" onchange="updateCategories()"> Landscaping</label>
-              <label class="cat-tag"><input type="checkbox" value="Gardening" onchange="updateCategories()"> Gardening</label>
-              <label class="cat-tag"><input type="checkbox" value="Cleaning" onchange="updateCategories()"> Cleaning</label>
-              <label class="cat-tag"><input type="checkbox" value="Pest Control" onchange="updateCategories()"> Pest Control</label>
-              <label class="cat-tag"><input type="checkbox" value="HVAC & Solar" onchange="updateCategories()"> HVAC &amp; Solar</label>
-              <label class="cat-tag"><input type="checkbox" value="Automotive" onchange="updateCategories()"> Automotive</label>
-              <label class="cat-tag"><input type="checkbox" value="Locksmiths" onchange="updateCategories()"> Locksmiths</label>
-              <label class="cat-tag"><input type="checkbox" value="Fencing" onchange="updateCategories()"> Fencing</label>
-              <label class="cat-tag"><input type="checkbox" value="Welding" onchange="updateCategories()"> Welding</label>
-              <label class="cat-tag"><input type="checkbox" value="Glazing" onchange="updateCategories()"> Glazing</label>
-              <label class="cat-tag"><input type="checkbox" value="Cabinetmaking" onchange="updateCategories()"> Cabinetmaking</label>
-              <label class="cat-tag"><input type="checkbox" value="Flooring" onchange="updateCategories()"> Flooring</label>
-              <label class="cat-tag"><input type="checkbox" value="Waterproofing" onchange="updateCategories()"> Waterproofing</label>
-              <label class="cat-tag"><input type="checkbox" value="Tech Support" onchange="updateCategories()"> Tech Support</label>
-              <label class="cat-tag"><input type="checkbox" value="Rubbish Removal" onchange="updateCategories()"> Rubbish Removal</label>
+            <div class="category-picker">
+              <div class="category-picker-head">
+                <div>
+                  <div class="category-picker-title">Pick your categories</div>
+                  <div class="category-picker-note">Choose up to 3 to start. Unlimited categories is available if you want the full feed.</div>
+                </div>
+                <div id="cat-count">(0/3)</div>
+              </div>
+              <div class="category-tray" id="selected-category-tray" aria-live="polite"></div>
+              <div class="category-block">
+                <div class="category-block-title">
+                  <h3>Core trades</h3>
+                  <span>Best starting point</span>
+                </div>
+                <div class="category-grid" id="category-grid-core"></div>
+              </div>
+              <details class="category-more" id="category-more">
+                <summary>More categories</summary>
+                <div class="category-more-body">
+                  <div class="category-grid" id="category-grid-more"></div>
+                </div>
+              </details>
+              <div class="category-actions">
+                <button class="category-clear" type="button" onclick="clearCategories()">Clear all</button>
+                <span class="category-picker-note" id="category-picker-status">Select a few and keep moving.</span>
+              </div>
             </div>
           </div>
           <a id="stripe-link" href="https://buy.stripe.com/8x27sN7dF2S0fy0cPyg7e01" class="hero-cta stripe-btn" onclick="return handleCheckout(event)">
@@ -653,6 +788,75 @@ footer a:hover { color: var(--accent-text); }
 </footer>
 
 <script>
+var CATEGORY_OPTIONS = [
+  { value: 'Plumbing & Gas', label: 'Plumbing & Gas', group: 'Core trades', helper: 'Drains, hot water, taps' },
+  { value: 'Electrical', label: 'Electrical', group: 'Core trades', helper: 'Sparky jobs, fans, lighting' },
+  { value: 'Building', label: 'Building', group: 'Core trades', helper: 'Renos, extensions, fences' },
+  { value: 'Carpentry', label: 'Carpentry', group: 'Core trades', helper: 'Decks, doors, timber work' },
+  { value: 'Roofing', label: 'Roofing', group: 'Core trades', helper: 'Leaks, gutters, storm damage' },
+  { value: 'Cleaning', label: 'Cleaning', group: 'Core trades', helper: 'Bond cleans, pressure cleaning' },
+  { value: 'Landscaping', label: 'Landscaping', group: 'Core trades', helper: 'Turf, mowing, retaining walls' },
+  { value: 'Painting', label: 'Painting', group: 'More categories', helper: 'Interior and exterior repaints' },
+  { value: 'Tiling', label: 'Tiling', group: 'More categories', helper: 'Bathrooms, splashbacks, floors' },
+  { value: 'Concreting', label: 'Concreting', group: 'More categories', helper: 'Driveways, slabs, paths' },
+  { value: 'Plastering', label: 'Plastering', group: 'More categories', helper: 'Patch jobs and wall repairs' },
+  { value: 'Earthmoving', label: 'Earthmoving', group: 'More categories', helper: 'Site prep and excavation' },
+  { value: 'Gardening', label: 'Gardening', group: 'More categories', helper: 'Yards, hedges, green waste' },
+  { value: 'Pest Control', label: 'Pest Control', group: 'More categories', helper: 'Termites, ants, general pests' },
+  { value: 'HVAC & Solar', label: 'HVAC & Solar', group: 'More categories', helper: 'Aircon, refrigeration, solar' },
+  { value: 'Automotive', label: 'Automotive', group: 'More categories', helper: 'Mechanic, detailing, blue slips' },
+  { value: 'Locksmiths', label: 'Locksmiths', group: 'More categories', helper: 'Keys, locks, access' },
+  { value: 'Fencing', label: 'Fencing', group: 'More categories', helper: 'Boundary and pool fencing' },
+  { value: 'Welding', label: 'Welding', group: 'More categories', helper: 'Fabrication and repairs' },
+  { value: 'Glazing', label: 'Glazing', group: 'More categories', helper: 'Windows and glass repairs' },
+  { value: 'Cabinetmaking', label: 'Cabinetmaking', group: 'More categories', helper: 'Joinery and fit-outs' },
+  { value: 'Flooring', label: 'Flooring', group: 'More categories', helper: 'Carpet, vinyl, timber' },
+  { value: 'Waterproofing', label: 'Waterproofing', group: 'More categories', helper: 'Bathrooms and leak fixes' },
+  { value: 'Tech Support', label: 'Tech Support', group: 'More categories', helper: 'Devices, Wi-Fi, laptops' },
+  { value: 'Rubbish Removal', label: 'Rubbish Removal', group: 'More categories', helper: 'Skip bins and cleanups' }
+];
+
+function escapeAttr(value) {
+  return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function renderCategoryChip(option) {
+  return [
+    '<label class="cat-tag" data-category-option="true">',
+    '<input type="checkbox" value="', escapeAttr(option.value), '" onchange="updateCategories()">',
+    '<span>', escapeHtml(option.label), '</span>',
+    option.helper ? '<small style="display:block;color:var(--text-dim);font-size:11px;font-weight:400;margin-top:2px;">' + escapeHtml(option.helper) + '</small>' : '',
+    '</label>'
+  ].join('');
+}
+
+function renderCategoryPicker() {
+  var core = document.getElementById('category-grid-core');
+  var more = document.getElementById('category-grid-more');
+  if (!core || !more) return;
+
+  core.innerHTML = '';
+  more.innerHTML = '';
+
+  CATEGORY_OPTIONS.forEach(function(option) {
+    var target = option.group === 'Core trades' ? core : more;
+    target.insertAdjacentHTML('beforeend', renderCategoryChip(option));
+  });
+}
+
+function getCategoryInputs() {
+  return document.querySelectorAll('#category-grid-core .cat-tag input, #category-grid-more .cat-tag input');
+}
+
+function getSelectedCategoryInputs() {
+  return document.querySelectorAll('#category-grid-core .cat-tag input:checked, #category-grid-more .cat-tag input:checked');
+}
+
+function clearCategories() {
+  getCategoryInputs().forEach(function(input) { input.checked = false; });
+  updateCategories();
+}
+
 function updateTotal() {
   var base = 31;
   var sms = document.querySelector('#upsell-sms .upsell-toggle').checked;
@@ -684,7 +888,7 @@ function handleCheckout(e) {
       return false;
     }
   }
-  var cats = document.querySelectorAll('#category-grid .cat-tag input:checked');
+  var cats = getSelectedCategoryInputs();
   if (cats.length === 0) {
     e.preventDefault();
     alert('Pick at least one service category.');
@@ -696,15 +900,61 @@ function handleCheckout(e) {
 function updateCategories() {
   var unlimited = document.querySelector('#upsell-categories .upsell-toggle').checked;
   var max = unlimited ? 999 : 3;
-  var all = document.querySelectorAll('#category-grid .cat-tag input');
-  var checked = document.querySelectorAll('#category-grid .cat-tag input:checked');
+  var all = getCategoryInputs();
+  var checked = getSelectedCategoryInputs();
   var count = checked.length;
-  document.getElementById('cat-count').textContent = unlimited ? '(unlimited)' : '(' + count + '/' + max + ')';
+  var countLabel = document.getElementById('cat-count');
+  var status = document.getElementById('category-picker-status');
+  var tray = document.getElementById('selected-category-tray');
+  var more = document.getElementById('category-more');
+
+  if (countLabel) countLabel.textContent = unlimited ? '(' + count + '/unlimited)' : '(' + count + '/' + max + ')';
+
+  if (tray) {
+    if (!count) {
+      tray.innerHTML = '<div class="category-empty">No categories selected yet.</div>';
+    } else {
+      tray.innerHTML = '';
+      Array.prototype.forEach.call(checked, function(input) {
+        tray.insertAdjacentHTML('beforeend', '<span class="selected-chip">' + escapeHtml(input.value) + '<button type="button" aria-label="Remove ' + escapeAttr(input.value) + '" onclick="toggleCategory(' + JSON.stringify(input.value) + ', false)">×</button></span>');
+      });
+    }
+  }
+
+  if (status) {
+    if (unlimited) {
+      status.textContent = 'Unlimited is on. Add as many categories as you want.';
+    } else if (count === 0) {
+      status.textContent = 'Start with your best three categories.';
+    } else if (count < max) {
+      status.textContent = 'Pick ' + (max - count) + ' more.';
+    } else {
+      status.textContent = '3 selected. Turn on unlimited if you need more.';
+    }
+  }
+
   all.forEach(function(cb) {
     var tag = cb.parentElement;
-    tag.classList.toggle('disabled', !cb.checked && count >= max && !unlimited);
+    var active = cb.checked;
+    tag.classList.toggle('active', active);
+    tag.classList.toggle('disabled', !active && count >= max && !unlimited);
+    cb.disabled = !active && count >= max && !unlimited;
   });
 }
+
+function toggleCategory(value, checked) {
+  var input = Array.prototype.find.call(getCategoryInputs(), function(cb) { return cb.value === value; });
+  if (!input) return;
+  input.checked = typeof checked === 'boolean' ? checked : !input.checked;
+  updateCategories();
+}
+
+renderCategoryPicker();
+updateCategories();
+document.querySelector('#upsell-categories .upsell-toggle').addEventListener('change', function() {
+  var more = document.getElementById('category-more');
+  if (more && this.checked) more.open = true;
+});
 
 
 // Scroll reveal
@@ -736,23 +986,148 @@ document.querySelectorAll('.stat-num:not([data-static])').forEach(function(el) {
   }
 });
 
-// Demo leads
-var sampleLeads = [
-  {category:"Plumbing & Gas",text:"Anyone know a good plumber around Yamba? Got a blocked drain that needs sorting ASAP.",location:"Yamba",time:"2h ago"},
-  {category:"Electrical",text:"Need a sparky to install ceiling fans in 3 bedrooms. Maclean area.",location:"Maclean",time:"4h ago"},
-  {category:"Building",text:"Looking for a builder for a small extension. Already have plans approved.",location:"Grafton",time:"6h ago"},
-  {category:"Painting",text:"Chasing a painter for interior repaint. 3 bed house. Quote needed.",location:"Iluka",time:"1h ago"},
-  {category:"Carpentry",text:"Need a carpenter to build a deck out the back. Approx 4x6m.",location:"Yamba",time:"3h ago"},
-  {category:"Roofing",text:"Roof is leaking after the storm. Anyone available today?",location:"Lawrence",time:"5h ago"},
-  {category:"Tiling",text:"Looking for a tiler for bathroom renovation. Walls and floor.",location:"Maclean",time:"8h ago"},
-  {category:"Concreting",text:"Want to get a quote for a new driveway. About 40sqm.",location:"Grafton",time:"2h ago"},
-  {category:"Landscaping",text:"After a landscaper for retaining wall and turf. New build.",location:"Yamba",time:"7h ago"},
-  {category:"Cleaning",text:"End of lease clean needed this Friday. 2 bed unit in Yamba.",location:"Yamba",time:"1h ago"},
-  {category:"Pest Control",text:"Got termites in the back fence. Need pest control urgently.",location:"Maclean",time:"3h ago"},
-  {category:"HVAC & Solar",text:"Looking at getting solar panels installed. After quotes.",location:"Grafton",time:"4h ago"},
-  {category:"Automotive",text:"Car won't start. Need a mobile mechanic in the Maclean area.",location:"Maclean",time:"6h ago"},
-  {category:"Tech Support",text:"Anyone help with an iPad that won't turn on? Screen is black.",location:"Yamba",time:"2h ago"},
-];
+function normalizeLeadText(value) {
+  return (value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+var LEAD_CATEGORY_ALIASES = {
+  'Plumbing & Gas': ['plumbing & gas', 'plumbing', 'plumber', 'gas', 'gasfitter', 'drain', 'drainage', 'hot water', 'tap', 'sink', 'blocked drain', 'leak'],
+  'Electrical': ['electrical', 'sparky', 'sparkie', 'electrician', 'switchboard', 'lighting', 'fans', 'ceiling fan', 'power point'],
+  'Building': ['building', 'builder', 'builders', 'renovation', 'renovations', 'extension', 'addition', 'carport', 'garage', 'fence', 'fencing'],
+  'Painting': ['painting', 'painter', 'paint', 'repaint', 'interior repaint', 'exterior paint'],
+  'Carpentry': ['carpentry', 'carpenter', 'deck', 'doors', 'skirting', 'architraves', 'cabinet', 'timber'],
+  'Roofing': ['roofing', 'roofer', 'roof', 'gutters', 'gutter', 'leak', 'leaking roof', 'storm damage'],
+  'Tiling': ['tiling', 'tiler', 'tile', 'tiles', 'grout', 'splashback', 'bathroom renovation'],
+  'Concreting': ['concreting', 'concrete', 'concretor', 'driveway', 'slab', 'footing', 'path'],
+  'Landscaping': ['landscaping', 'landscaper', 'landscape', 'gardener', 'gardening', 'retaining wall', 'turf', 'garden bed', 'pressure clean and mow', 'mow', 'lawn'],
+  'Cleaning': ['cleaning', 'cleaner', 'house cleaner', 'end of lease', 'bond clean', 'carpet clean', 'pressure clean', 'roof cleaning', 'solar panel cleaning'],
+  'Pest Control': ['pest control', 'pest', 'termite', 'termites', 'cockroach', 'cockroaches', 'ant', 'ants', 'spider', 'wasp'],
+  'HVAC & Solar': ['hvac', 'air conditioning', 'aircon', 'air conditioner', 'air conditioner installer', 'electrical and solar', 'solar', 'solar installer', 'battery', 'refrigeration', 'conditioning'],
+  'Automotive': ['automotive', 'mechanic', 'mobile mechanic', 'detailer', 'detailing', 'blue slip', 'car', 'vehicle', 'motorcycle'],
+  'Tech Support': ['tech support', 'tech', 'computer', 'laptop', 'ipad', 'iphone', 'wifi', 'internet', 'printer', 'tablet', 'device', 'smart tv']
+};
+
+function getCategoryAliases(category) {
+  var raw = normalizeLeadText(category);
+  var aliases = [];
+
+  Object.keys(LEAD_CATEGORY_ALIASES).forEach(function(label) {
+    var labelNorm = normalizeLeadText(label);
+    if (raw === labelNorm || raw.indexOf(labelNorm) !== -1 || labelNorm.indexOf(raw) !== -1) {
+      aliases = aliases.concat(LEAD_CATEGORY_ALIASES[label]);
+    }
+  });
+
+  if (!aliases.length && raw) aliases.push(raw);
+  return aliases.map(normalizeLeadText).filter(function(value, index, self) { return value && self.indexOf(value) === index; });
+}
+
+function textContainsAlias(text, alias) {
+  var haystack = ' ' + normalizeLeadText(text) + ' ';
+  var needle = normalizeLeadText(alias);
+  if (!haystack.trim() || !needle) return false;
+  if (needle.indexOf(' ') !== -1) return haystack.indexOf(' ' + needle + ' ') !== -1;
+  return haystack.indexOf(' ' + needle + ' ') !== -1;
+}
+
+function displayLeadCategory(rawCategory, fallbackCategory) {
+  var normalized = normalizeLeadText(rawCategory);
+  var fallback = fallbackCategory || rawCategory || 'Lead';
+
+  for (var label in LEAD_CATEGORY_ALIASES) {
+    if (!Object.prototype.hasOwnProperty.call(LEAD_CATEGORY_ALIASES, label)) continue;
+    var labelAliases = [label].concat(LEAD_CATEGORY_ALIASES[label]);
+    for (var i = 0; i < labelAliases.length; i++) {
+      if (normalized === normalizeLeadText(labelAliases[i])) return label;
+    }
+  }
+
+  if (!normalized || normalized === 'other' || normalized === 'handyman') {
+    return fallback;
+  }
+
+  return rawCategory;
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function chooseRealLead(area, category) {
+  var leads = window.__LEADDROP_REAL_LEADS__ || [];
+  if (!leads.length) return null;
+
+  var areaNorm = normalizeLeadText(area);
+  var categoryNorm = normalizeLeadText(category);
+  var categoryAliases = getCategoryAliases(category);
+  var areaTokens = areaNorm ? areaNorm.split(' ') : [];
+  var best = null;
+  var bestScore = -1;
+
+  leads.forEach(function(lead) {
+    var leadLocation = normalizeLeadText(lead.location);
+    var leadGroup = normalizeLeadText(lead.group_name);
+    var leadText = normalizeLeadText(lead.text);
+    var leadSummary = normalizeLeadText(lead.summary);
+    var leadCategory = normalizeLeadText(lead.category);
+    var leadSignals = [leadCategory, leadLocation, leadGroup, leadText, leadSummary].join(' ');
+    var score = 0;
+
+    if (categoryNorm && leadCategory === categoryNorm) {
+      score += 6;
+    } else if (categoryNorm && leadCategory.indexOf(categoryNorm) !== -1) {
+      score += 4;
+    }
+
+    categoryAliases.forEach(function(alias) {
+      if (!alias) return;
+      if (textContainsAlias(leadSignals, alias)) score += 4;
+    });
+
+    if (areaNorm && leadLocation === areaNorm) {
+      score += 8;
+    } else if (areaNorm && leadLocation.indexOf(areaNorm) !== -1) {
+      score += 6;
+    } else if (areaNorm && (leadGroup.indexOf(areaNorm) !== -1 || leadText.indexOf(areaNorm) !== -1)) {
+      score += 4;
+    }
+
+    areaTokens.forEach(function(token) {
+      if (token.length > 2 && (leadLocation.indexOf(token) !== -1 || leadGroup.indexOf(token) !== -1 || leadText.indexOf(token) !== -1)) {
+        score += 1;
+      }
+    });
+
+    if (score > bestScore) {
+      bestScore = score;
+      best = lead;
+    }
+  });
+
+  return best || leads[0];
+}
+
+function renderLeadCard(lead, area, category) {
+  var location = lead.location || area || 'your area';
+  var matchedCategory = displayLeadCategory(lead.category, category);
+  var groupName = lead.group_name || 'LeadDrop';
+  var permalink = lead.post_link || '#';
+  var text = lead.text || lead.summary || 'No lead text available.';
+  return [
+    '<div class="demo-lead">',
+    '<div class="lead-category">'+escapeHtml(matchedCategory)+'</div>',
+    '<div class="lead-text">"'+escapeHtml(text)+'"</div>',
+    '<div class="lead-meta">'+escapeHtml(location)+'</div>',
+    '<a class="lead-link" href="'+escapeHtml(permalink)+'" target="_blank" rel="noopener">View conversation in '+escapeHtml(groupName)+' →</a>',
+    '</div>',
+    '<p class="demo-note">This is a live matched lead from the LeadDrop pool.</p>'
+  ].join('');
+}
 
 function showDemoLeads() {
   var name = document.getElementById('demo-name').value.trim();
@@ -770,17 +1145,14 @@ function showDemoLeads() {
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({name:name, email:email, location:location, category:category, source:'demo-form'})
   }).catch(function(){});
-  var matches = sampleLeads.filter(function(l) { return l.category === category; });
-  var html = '';
-  if (matches.length > 0) {
-    matches.forEach(function(lead) {
-      html += '<div class="demo-lead"><div class="lead-category">'+lead.category+'</div><div class="lead-text">"'+lead.text+'"</div><div class="lead-meta">'+lead.location+' &middot; '+lead.time+'</div></div>';
-    });
-    html += '<p class=\"demo-note\">These are real posts from the last 24 hours. You could be replying right now.</p>';
-  } else {
-    html = '<p style=\"color:var(--text-muted);text-align:center;\">No recent leads for '+category+'. Try another category.</p>';
+  var lead = chooseRealLead(location, category);
+  if (!lead) {
+    results.style.display = 'block';
+    results.innerHTML = '<p style="color:var(--text-muted);text-align:center;">No live leads loaded yet. Refresh or try again in a moment.</p>';
+    return;
   }
-  results.innerHTML = html;
+
+  results.innerHTML = renderLeadCard(lead, location, category);
   results.style.display = 'block';
 }
 </script>
