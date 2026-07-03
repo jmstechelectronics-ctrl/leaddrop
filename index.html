@@ -372,15 +372,10 @@ nav {
 .category-picker-head {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: baseline;
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 12px;
-}
-.category-picker-copy {
-  display: grid;
-  gap: 4px;
-  min-width: 0;
 }
 .category-picker-title {
   font-size: 13px;
@@ -392,27 +387,8 @@ nav {
 .category-picker-note {
   font-size: 12px;
   color: var(--text-dim);
+  margin-top: 4px;
   text-align: left;
-}
-.category-picker-tools {
-  display: grid;
-  gap: 8px;
-  min-width: min(100%, 260px);
-}
-.category-search {
-  width: 100%;
-  min-width: 0;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 10px 12px;
-  background: var(--bg);
-  color: var(--text);
-  font: inherit;
-}
-.category-search:focus {
-  outline: none;
-  border-color: rgba(234,179,8,.55);
-  box-shadow: 0 0 0 3px rgba(234,179,8,.08);
 }
 .category-tray {
   display: flex;
@@ -534,9 +510,6 @@ nav {
 }
 .category-more[open] summary::after { content: 'Hide more'; }
 .category-more-body { margin-top: 12px; }
-.category-more[open] .category-picker-note {
-  margin-bottom: 10px;
-}
 .category-actions {
   display: flex;
   justify-content: space-between;
@@ -773,14 +746,11 @@ footer a:hover { color: var(--accent-text); }
           <div class="field-group">
             <div class="category-picker">
               <div class="category-picker-head">
-                <div class="category-picker-copy">
+                <div>
                   <div class="category-picker-title">Pick your categories</div>
                   <div class="category-picker-note">Choose up to 3 to start. Unlimited categories is available if you want the full feed.</div>
                 </div>
-                <div class="category-picker-tools">
-                  <input type="search" id="category-search" class="category-search" placeholder="Search categories" autocomplete="off" />
-                  <div id="cat-count">(0/3)</div>
-                </div>
+                <div id="cat-count">(0/3)</div>
               </div>
               <div class="category-tray" id="selected-category-tray" aria-live="polite"></div>
               <div class="category-block">
@@ -869,7 +839,7 @@ function escapeAttr(value) {
 
 function renderCategoryChip(option) {
   return [
-    '<label class="cat-tag" data-category-option="true" data-search="', escapeAttr((option.label + ' ' + (option.helper || '')).toLowerCase()), '">',
+    '<label class="cat-tag" data-category-option="true">',
     '<input type="checkbox" value="', escapeAttr(option.value), '" onchange="updateCategories()">',
     '<span>', escapeHtml(option.label), '</span>',
     option.helper ? '<small>' + escapeHtml(option.helper) + '</small>' : '',
@@ -902,27 +872,6 @@ function getSelectedCategoryInputs() {
 function clearCategories() {
   getCategoryInputs().forEach(function(input) { input.checked = false; });
   updateCategories();
-}
-
-function filterCategories() {
-  var queryEl = document.getElementById('category-search');
-  var query = queryEl ? queryEl.value.trim().toLowerCase() : '';
-  var labels = document.querySelectorAll('.cat-tag');
-  var more = document.getElementById('category-more');
-  var matchedMore = false;
-
-  Array.prototype.forEach.call(labels, function(label) {
-    var searchText = label.getAttribute('data-search') || label.textContent.toLowerCase();
-    var visible = !query || searchText.indexOf(query) !== -1;
-    label.hidden = !visible;
-    if (visible && label.closest('#category-grid-more')) matchedMore = true;
-  });
-
-  if (more) {
-    if (query && matchedMore) {
-      more.open = true;
-    }
-  }
 }
 
 function updateTotal() {
@@ -1008,8 +957,6 @@ function updateCategories() {
     tag.classList.toggle('disabled', !active && count >= max && !unlimited);
     cb.disabled = !active && count >= max && !unlimited;
   });
-
-  filterCategories();
 }
 
 function toggleCategory(value, checked) {
@@ -1021,7 +968,6 @@ function toggleCategory(value, checked) {
 
 renderCategoryPicker();
 updateCategories();
-document.getElementById('category-search').addEventListener('input', filterCategories);
 document.querySelector('#upsell-categories .upsell-toggle').addEventListener('change', function() {
   var more = document.getElementById('category-more');
   if (more && this.checked) more.open = true;
