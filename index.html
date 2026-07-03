@@ -372,10 +372,15 @@ nav {
 .category-picker-head {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 12px;
+}
+.category-picker-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
 }
 .category-picker-title {
   font-size: 13px;
@@ -387,8 +392,27 @@ nav {
 .category-picker-note {
   font-size: 12px;
   color: var(--text-dim);
-  margin-top: 4px;
   text-align: left;
+}
+.category-picker-tools {
+  display: grid;
+  gap: 8px;
+  min-width: min(100%, 260px);
+}
+.category-search {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+.category-search:focus {
+  outline: none;
+  border-color: rgba(234,179,8,.55);
+  box-shadow: 0 0 0 3px rgba(234,179,8,.08);
 }
 .category-tray {
   display: flex;
@@ -441,26 +465,42 @@ nav {
   font-size: 12px;
   color: var(--text-dim);
 }
-.category-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  gap: 10px;
+}
 .cat-tag {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  display: grid;
+  gap: 4px;
+  align-content: start;
   background: var(--bg);
   border: 1px solid var(--border);
-  padding: 9px 14px;
-  border-radius: 999px;
-  font-size: 12px;
-  color: var(--text-muted);
+  padding: 12px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  color: var(--text);
   cursor: pointer;
   transition: all 0.2s;
   user-select: none;
+  min-height: 74px;
 }
 .cat-tag input {
   position: absolute;
   opacity: 0;
   pointer-events: none;
+}
+.cat-tag span {
+  font-weight: 700;
+  line-height: 1.2;
+}
+.cat-tag small {
+  display: block;
+  color: var(--text-dim);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.35;
 }
 .cat-tag:hover { border-color: var(--border-strong); transform: translateY(-1px); }
 .cat-tag.active {
@@ -494,6 +534,9 @@ nav {
 }
 .category-more[open] summary::after { content: 'Hide more'; }
 .category-more-body { margin-top: 12px; }
+.category-more[open] .category-picker-note {
+  margin-bottom: 10px;
+}
 .category-actions {
   display: flex;
   justify-content: space-between;
@@ -626,7 +669,7 @@ footer a:hover { color: var(--accent-text); }
         <input type="text" id="demo-location" placeholder="Your suburb" style="padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font);width:140px;flex-shrink:0;">
         <select id="demo-category" style="padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font);cursor:pointer;">
           <option value="">Pick a category</option>
-          <option>Plumbing & Gas</option><option>Electrical</option><option>Building</option><option>Painting</option><option>Carpentry</option><option>Roofing</option><option>Tiling</option><option>Concreting</option><option>Landscaping</option><option>Cleaning</option><option>Pest Control</option><option>HVAC & Solar</option><option>Automotive</option><option>Tech Support</option>
+          <option>Plumbing & Gas</option><option>Electrical</option><option>Building</option><option>Carpentry</option><option>Handyman</option><option>Roofing</option><option>Cleaning</option><option>Landscaping</option><option>Painting</option><option>Tiling</option><option>Concreting</option><option>Pest Control</option><option>HVAC & Solar</option><option>Automotive</option><option>Tech Support</option>
         </select>
         <button onclick="showDemoLeads()" class="hero-cta" style="white-space:nowrap;">Show me</button>
       </div>
@@ -730,11 +773,14 @@ footer a:hover { color: var(--accent-text); }
           <div class="field-group">
             <div class="category-picker">
               <div class="category-picker-head">
-                <div>
+                <div class="category-picker-copy">
                   <div class="category-picker-title">Pick your categories</div>
                   <div class="category-picker-note">Choose up to 3 to start. Unlimited categories is available if you want the full feed.</div>
                 </div>
-                <div id="cat-count">(0/3)</div>
+                <div class="category-picker-tools">
+                  <input type="search" id="category-search" class="category-search" placeholder="Search categories" autocomplete="off" />
+                  <div id="cat-count">(0/3)</div>
+                </div>
               </div>
               <div class="category-tray" id="selected-category-tray" aria-live="polite"></div>
               <div class="category-block">
@@ -793,6 +839,7 @@ var CATEGORY_OPTIONS = [
   { value: 'Electrical', label: 'Electrical', group: 'Core trades', helper: 'Sparky jobs, fans, lighting' },
   { value: 'Building', label: 'Building', group: 'Core trades', helper: 'Renos, extensions, fences' },
   { value: 'Carpentry', label: 'Carpentry', group: 'Core trades', helper: 'Decks, doors, timber work' },
+  { value: 'Handyman', label: 'Handyman', group: 'Core trades', helper: 'Odd jobs, minor repairs, maintenance' },
   { value: 'Roofing', label: 'Roofing', group: 'Core trades', helper: 'Leaks, gutters, storm damage' },
   { value: 'Cleaning', label: 'Cleaning', group: 'Core trades', helper: 'Bond cleans, pressure cleaning' },
   { value: 'Landscaping', label: 'Landscaping', group: 'Core trades', helper: 'Turf, mowing, retaining walls' },
@@ -822,10 +869,10 @@ function escapeAttr(value) {
 
 function renderCategoryChip(option) {
   return [
-    '<label class="cat-tag" data-category-option="true">',
+    '<label class="cat-tag" data-category-option="true" data-search="', escapeAttr((option.label + ' ' + (option.helper || '')).toLowerCase()), '">',
     '<input type="checkbox" value="', escapeAttr(option.value), '" onchange="updateCategories()">',
     '<span>', escapeHtml(option.label), '</span>',
-    option.helper ? '<small style="display:block;color:var(--text-dim);font-size:11px;font-weight:400;margin-top:2px;">' + escapeHtml(option.helper) + '</small>' : '',
+    option.helper ? '<small>' + escapeHtml(option.helper) + '</small>' : '',
     '</label>'
   ].join('');
 }
@@ -855,6 +902,27 @@ function getSelectedCategoryInputs() {
 function clearCategories() {
   getCategoryInputs().forEach(function(input) { input.checked = false; });
   updateCategories();
+}
+
+function filterCategories() {
+  var queryEl = document.getElementById('category-search');
+  var query = queryEl ? queryEl.value.trim().toLowerCase() : '';
+  var labels = document.querySelectorAll('.cat-tag');
+  var more = document.getElementById('category-more');
+  var matchedMore = false;
+
+  Array.prototype.forEach.call(labels, function(label) {
+    var searchText = label.getAttribute('data-search') || label.textContent.toLowerCase();
+    var visible = !query || searchText.indexOf(query) !== -1;
+    label.hidden = !visible;
+    if (visible && label.closest('#category-grid-more')) matchedMore = true;
+  });
+
+  if (more) {
+    if (query && matchedMore) {
+      more.open = true;
+    }
+  }
 }
 
 function updateTotal() {
@@ -940,6 +1008,8 @@ function updateCategories() {
     tag.classList.toggle('disabled', !active && count >= max && !unlimited);
     cb.disabled = !active && count >= max && !unlimited;
   });
+
+  filterCategories();
 }
 
 function toggleCategory(value, checked) {
@@ -951,6 +1021,7 @@ function toggleCategory(value, checked) {
 
 renderCategoryPicker();
 updateCategories();
+document.getElementById('category-search').addEventListener('input', filterCategories);
 document.querySelector('#upsell-categories .upsell-toggle').addEventListener('change', function() {
   var more = document.getElementById('category-more');
   if (more && this.checked) more.open = true;
@@ -996,6 +1067,7 @@ var LEAD_CATEGORY_ALIASES = {
   'Building': ['building', 'builder', 'builders', 'renovation', 'renovations', 'extension', 'addition', 'carport', 'garage', 'fence', 'fencing'],
   'Painting': ['painting', 'painter', 'paint', 'repaint', 'interior repaint', 'exterior paint'],
   'Carpentry': ['carpentry', 'carpenter', 'deck', 'doors', 'skirting', 'architraves', 'cabinet', 'timber'],
+  'Handyman': ['handyman', 'odd jobs', 'minor repairs', 'general repairs', 'home maintenance', 'property maintenance', 'maintenance', 'assemble', 'flat pack', 'kit shed', 'carport', 'door hanging', 'door replacement', 'hang doors', 'replace doors', 'skirting', 'architraves', 'gyprock'],
   'Roofing': ['roofing', 'roofer', 'roof', 'gutters', 'gutter', 'leak', 'leaking roof', 'storm damage'],
   'Tiling': ['tiling', 'tiler', 'tile', 'tiles', 'grout', 'splashback', 'bathroom renovation'],
   'Concreting': ['concreting', 'concrete', 'concretor', 'driveway', 'slab', 'footing', 'path'],
