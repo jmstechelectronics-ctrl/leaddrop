@@ -390,6 +390,45 @@ nav {
   margin-top: 4px;
   text-align: left;
 }
+.category-picker-tools {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.category-select {
+  flex: 1 1 220px;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 11px 12px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+.category-select:focus {
+  outline: none;
+  border-color: rgba(234,179,8,.55);
+  box-shadow: 0 0 0 3px rgba(234,179,8,.08);
+}
+.category-add {
+  flex: 0 0 auto;
+  border: 1px solid var(--accent);
+  background: linear-gradient(135deg, var(--accent), #d4a106);
+  color: #000;
+  border-radius: 12px;
+  padding: 11px 16px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.category-add:hover { filter: brightness(1.02); }
+.category-add:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 .category-tray {
   display: flex;
   flex-wrap: wrap;
@@ -423,93 +462,6 @@ nav {
   line-height: 1;
   padding: 0;
 }
-.category-block + .category-block { margin-top: 14px; }
-.category-block-title {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-.category-block-title h3 {
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text);
-}
-.category-block-title span {
-  font-size: 12px;
-  color: var(--text-dim);
-}
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
-  gap: 10px;
-}
-.cat-tag {
-  position: relative;
-  display: grid;
-  gap: 4px;
-  align-content: start;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  padding: 12px 14px;
-  border-radius: 16px;
-  font-size: 13px;
-  color: var(--text);
-  cursor: pointer;
-  transition: all 0.2s;
-  user-select: none;
-  min-height: 74px;
-}
-.cat-tag input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-.cat-tag span {
-  font-weight: 700;
-  line-height: 1.2;
-}
-.cat-tag small {
-  display: block;
-  color: var(--text-dim);
-  font-size: 11px;
-  font-weight: 400;
-  line-height: 1.35;
-}
-.cat-tag:hover { border-color: var(--border-strong); transform: translateY(-1px); }
-.cat-tag.active {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  color: var(--accent-text);
-}
-.cat-tag.disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  transform: none;
-}
-.category-more {
-  margin-top: 12px;
-  border-top: 1px solid var(--border);
-  padding-top: 12px;
-}
-.category-more summary {
-  cursor: pointer;
-  list-style: none;
-  font-size: 13px;
-  color: var(--text-muted);
-  font-weight: 600;
-}
-.category-more summary::-webkit-details-marker { display: none; }
-.category-more summary::after {
-  content: 'See more';
-  float: right;
-  color: var(--accent-text);
-  font-weight: 600;
-}
-.category-more[open] summary::after { content: 'Hide more'; }
-.category-more-body { margin-top: 12px; }
 .category-actions {
   display: flex;
   justify-content: space-between;
@@ -544,6 +496,8 @@ footer a:hover { color: var(--accent-text); }
   .how-grid::before { display: none; }
   .hero { padding: 120px 0 60px; }
   section { padding: 60px 0; }
+  .category-picker-tools { flex-direction: column; }
+  .category-add { width: 100%; }
 }
 
 /* ===== Reveal ===== */
@@ -554,20 +508,11 @@ footer a:hover { color: var(--accent-text); }
 <body>
 
 <nav>
-  <!-- EOFY Sale Banner -->
-  <div style="background:#131416;text-align:center;padding:8px 20px;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;font-size:12px;font-weight:600;border-bottom:1px solid rgba(234,179,8,0.15);">
-    <span style="color:#eab308;">⚡ <strong>EOFY SALE — 4 DAYS LEFT</strong></span>
-    <span style="color:#7a7a75;margin-left:12px;">
-      <span style="text-decoration:line-through;">25% off</span> &nbsp;
-      <span style="color:#f0f0ec;background:rgba(234,179,8,0.12);padding:2px 8px;border-radius:4px;">20% off — few spots</span> &nbsp;
-      <span>10% off</span>
-    </span>
-  </div>
   <div class="nav-inner">
     <a href="#" class="logo">
       <img src="logo-nav.svg" alt="LeadDrop" style="height:50px;">
     </a>
-    <a href="#get-started" class="nav-cta">Get early access</a>
+    <a href="#get-started" class="nav-cta">Get started</a>
   </div>
 </nav>
 
@@ -577,7 +522,7 @@ footer a:hover { color: var(--accent-text); }
     <img src="hero.svg" alt="LeadDrop — Local leads, dropped." class="hero-banner">
     <p>We track community conversations across the web — so when someone nearby asks for a service you provide, you're the first to know.</p>
     <a href="#get-started" class="hero-cta">
-      Get early access
+      Get started
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
     </a>
     <div class="stats-grid">
@@ -712,8 +657,7 @@ footer a:hover { color: var(--accent-text); }
     <div class="pricing-grid reveal">
       <div class="pricing-card highlight">
         <div class="pricing-badge">Core</div>
-        <div class="pricing-price" id="total-price">$31<span>/month</span></div>
-        <p class="pricing-desc"><span style="text-decoration:line-through;color:var(--text-dim);">$39</span> <span style="color:var(--accent);font-weight:600;">EOFY Sale — 20% off</span></p>
+        <div class="pricing-price" id="total-price">$39<span>/month</span></div>
         <p class="pricing-desc">Leads delivered to your phone. Cancel anytime.</p>
         <ul class="pricing-features">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Hourly lead alerts — Telegram or email</li>
@@ -744,28 +688,21 @@ footer a:hover { color: var(--accent-text); }
           <div class="field-group"><label>Email</label><input type="email" placeholder="you@example.com" required></div>
           <div class="field-group"><label>Phone</label><input type="tel" placeholder="04XX XXX XXX" required></div>
           <div class="field-group">
-            <div class="category-picker">
+          <div class="category-picker">
               <div class="category-picker-head">
                 <div>
                   <div class="category-picker-title">Pick your categories</div>
-                  <div class="category-picker-note">Choose up to 3 to start. Unlimited categories is available if you want the full feed.</div>
+                  <div class="category-picker-note">Choose up to 3 to start. Pick one category at a time from the dropdown.</div>
                 </div>
                 <div id="cat-count">(0/3)</div>
               </div>
-              <div class="category-tray" id="selected-category-tray" aria-live="polite"></div>
-              <div class="category-block">
-                <div class="category-block-title">
-                  <h3>Core trades</h3>
-                  <span>Best starting point</span>
-                </div>
-                <div class="category-grid" id="category-grid-core"></div>
+              <div class="category-picker-tools">
+                <select id="category-select" class="category-select" aria-label="Category dropdown">
+                  <option value="">Choose a category</option>
+                </select>
+                <button class="category-add" type="button" onclick="addSelectedCategory()">Add category</button>
               </div>
-              <details class="category-more" id="category-more">
-                <summary>More categories</summary>
-                <div class="category-more-body">
-                  <div class="category-grid" id="category-grid-more"></div>
-                </div>
-              </details>
+              <div class="category-tray" id="selected-category-tray" aria-live="polite"></div>
               <div class="category-actions">
                 <button class="category-clear" type="button" onclick="clearCategories()">Clear all</button>
                 <span class="category-picker-note" id="category-picker-status">Select a few and keep moving.</span>
@@ -774,7 +711,7 @@ footer a:hover { color: var(--accent-text); }
           </div>
           <a id="stripe-link" href="https://buy.stripe.com/8x27sN7dF2S0fy0cPyg7e01" class="hero-cta stripe-btn" onclick="return handleCheckout(event)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            Checkout with Stripe — <span id="checkout-price">$31</span>/mo
+            Checkout with Stripe — <span id="checkout-price">$39</span>/mo
           </a>
         </form>
         <p class="signup-note">Secured by Stripe. Cancel anytime. No lock-in.</p>
@@ -832,50 +769,90 @@ var CATEGORY_OPTIONS = [
   { value: 'Tech Support', label: 'Tech Support', group: 'More categories', helper: 'Devices, Wi-Fi, laptops' },
   { value: 'Rubbish Removal', label: 'Rubbish Removal', group: 'More categories', helper: 'Skip bins and cleanups' }
 ];
+var selectedCategories = [];
 
 function escapeAttr(value) {
   return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function renderCategoryChip(option) {
-  return [
-    '<label class="cat-tag" data-category-option="true">',
-    '<input type="checkbox" value="', escapeAttr(option.value), '" onchange="updateCategories()">',
-    '<span>', escapeHtml(option.label), '</span>',
-    option.helper ? '<small>' + escapeHtml(option.helper) + '</small>' : '',
-    '</label>'
-  ].join('');
-}
-
 function renderCategoryPicker() {
-  var core = document.getElementById('category-grid-core');
-  var more = document.getElementById('category-grid-more');
-  if (!core || !more) return;
+  var select = document.getElementById('category-select');
+  if (!select) return;
 
-  core.innerHTML = '';
-  more.innerHTML = '';
+  var groups = {};
+  var order = [];
 
   CATEGORY_OPTIONS.forEach(function(option) {
-    var target = option.group === 'Core trades' ? core : more;
-    target.insertAdjacentHTML('beforeend', renderCategoryChip(option));
+    if (!groups[option.group]) {
+      groups[option.group] = [];
+      order.push(option.group);
+    }
+    groups[option.group].push(option);
+  });
+
+  select.innerHTML = '<option value="">Choose a category</option>';
+
+  order.forEach(function(groupName) {
+    var group = document.createElement('optgroup');
+    group.label = groupName;
+
+    groups[groupName].forEach(function(option) {
+      var opt = document.createElement('option');
+      opt.value = option.value;
+      opt.textContent = option.label;
+      group.appendChild(opt);
+    });
+
+    select.appendChild(group);
   });
 }
 
-function getCategoryInputs() {
-  return document.querySelectorAll('#category-grid-core .cat-tag input, #category-grid-more .cat-tag input');
+function getSelectedCategoryValues() {
+  return selectedCategories.slice();
 }
 
-function getSelectedCategoryInputs() {
-  return document.querySelectorAll('#category-grid-core .cat-tag input:checked, #category-grid-more .cat-tag input:checked');
+function findCategoryOption(value) {
+  for (var i = 0; i < CATEGORY_OPTIONS.length; i++) {
+    if (CATEGORY_OPTIONS[i].value === value) return CATEGORY_OPTIONS[i];
+  }
+  return null;
+}
+
+function getCategorySelect() {
+  return document.getElementById('category-select');
 }
 
 function clearCategories() {
-  getCategoryInputs().forEach(function(input) { input.checked = false; });
+  selectedCategories = [];
+  updateCategories();
+}
+
+function addSelectedCategory(value) {
+  var select = getCategorySelect();
+  var chosen = (typeof value === 'string' ? value : (select && select.value) || '').trim();
+  var option = findCategoryOption(chosen);
+  if (!option) return;
+
+  if (selectedCategories.indexOf(option.value) !== -1) {
+    if (select) select.value = '';
+    updateCategories();
+    return;
+  }
+
+  var unlimited = document.querySelector('#upsell-categories .upsell-toggle').checked;
+  var max = unlimited ? 999 : 3;
+  if (selectedCategories.length >= max) {
+    updateCategories();
+    return;
+  }
+
+  selectedCategories.push(option.value);
+  if (select) select.value = '';
   updateCategories();
 }
 
 function updateTotal() {
-  var base = 31;
+  var base = 39;
   var sms = document.querySelector('#upsell-sms .upsell-toggle').checked;
   var cats = document.querySelector('#upsell-categories .upsell-toggle').checked;
   var total = base + (sms ? 10 : 0) + (cats ? 10 : 0);
@@ -884,10 +861,10 @@ function updateTotal() {
 
   // Update Stripe link
   var links = {
-    '00': 'https://buy.stripe.com/14AdRbcxZ8ck99CaHqg7e05',   // Core $31 EOFY
-    '10': 'https://buy.stripe.com/cNicN7eG7gIQ5Xq02Mg7e06',   // +SMS $41
-    '01': 'https://buy.stripe.com/9B628t7dFcsAbhK4j2g7e07',   // +Unlimited $41
-    '11': 'https://buy.stripe.com/9B600l41tbowetWaHqg7e08'    // Both $51
+    '00': 'https://buy.stripe.com/8x27sN7dF2S0fy0cPyg7e01',   // Core $39
+    '10': 'https://buy.stripe.com/7sY14peG7bowclOeXGg7e02',   // +SMS $49
+    '01': 'https://buy.stripe.com/dRm9AV41tcsA2LedTCg7e03',   // +Unlimited $49
+    '11': 'https://buy.stripe.com/bJedRbcxZeAIetWg1Kg7e04'    // Both $59
   };
   var key = (sms ? '1' : '0') + (cats ? '1' : '0');
   document.getElementById('stripe-link').href = links[key];
@@ -905,8 +882,7 @@ function handleCheckout(e) {
       return false;
     }
   }
-  var cats = getSelectedCategoryInputs();
-  if (cats.length === 0) {
+  if (selectedCategories.length === 0) {
     e.preventDefault();
     alert('Pick at least one service category.');
     return false;
@@ -917,13 +893,12 @@ function handleCheckout(e) {
 function updateCategories() {
   var unlimited = document.querySelector('#upsell-categories .upsell-toggle').checked;
   var max = unlimited ? 999 : 3;
-  var all = getCategoryInputs();
-  var checked = getSelectedCategoryInputs();
-  var count = checked.length;
+  var count = selectedCategories.length;
   var countLabel = document.getElementById('cat-count');
   var status = document.getElementById('category-picker-status');
   var tray = document.getElementById('selected-category-tray');
-  var more = document.getElementById('category-more');
+  var select = getCategorySelect();
+  var addButton = document.querySelector('.category-add');
 
   if (countLabel) countLabel.textContent = unlimited ? '(' + count + '/unlimited)' : '(' + count + '/' + max + ')';
 
@@ -932,8 +907,8 @@ function updateCategories() {
       tray.innerHTML = '<div class="category-empty">No categories selected yet.</div>';
     } else {
       tray.innerHTML = '';
-      Array.prototype.forEach.call(checked, function(input) {
-        tray.insertAdjacentHTML('beforeend', '<span class="selected-chip">' + escapeHtml(input.value) + '<button type="button" aria-label="Remove ' + escapeAttr(input.value) + '" onclick="toggleCategory(' + JSON.stringify(input.value) + ', false)">×</button></span>');
+      selectedCategories.forEach(function(value) {
+        tray.insertAdjacentHTML('beforeend', '<span class="selected-chip">' + escapeHtml(value) + '<button type="button" data-category-value="' + escapeAttr(value) + '" aria-label="Remove ' + escapeAttr(value) + '" onclick="toggleCategory(this.getAttribute(\'data-category-value\'), false)">×</button></span>');
       });
     }
   }
@@ -950,27 +925,25 @@ function updateCategories() {
     }
   }
 
-  all.forEach(function(cb) {
-    var tag = cb.parentElement;
-    var active = cb.checked;
-    tag.classList.toggle('active', active);
-    tag.classList.toggle('disabled', !active && count >= max && !unlimited);
-    cb.disabled = !active && count >= max && !unlimited;
-  });
-}
-
-function toggleCategory(value, checked) {
-  var input = Array.prototype.find.call(getCategoryInputs(), function(cb) { return cb.value === value; });
-  if (!input) return;
-  input.checked = typeof checked === 'boolean' ? checked : !input.checked;
-  updateCategories();
+  if (addButton) {
+    addButton.disabled = !select || !select.value || (!unlimited && count >= max);
+  }
 }
 
 renderCategoryPicker();
 updateCategories();
-document.querySelector('#upsell-categories .upsell-toggle').addEventListener('change', function() {
-  var more = document.getElementById('category-more');
-  if (more && this.checked) more.open = true;
+
+function toggleCategory(value, checked) {
+  if (checked === false) {
+    selectedCategories = selectedCategories.filter(function(item) { return item !== value; });
+    updateCategories();
+    return;
+  }
+  addSelectedCategory(value);
+}
+
+document.getElementById('category-select').addEventListener('change', function() {
+  if (this.value) addSelectedCategory(this.value);
 });
 
 
