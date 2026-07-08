@@ -230,45 +230,73 @@ nav {
 .demo-lead .lead-link { font-size: 12px; color: var(--accent-text); text-decoration: none; margin-top: 4px; display: inline-block; }
 .demo-note { margin-top: 16px; font-size: 13px; color: var(--accent-text); text-align: center; }
 
-/* ===== Lead mockup (phone notification) ===== */
+/* ===== iPhone mockup ===== */
 .lead-mockup { display: flex; justify-content: center; }
-.lead-phone {
-  width: 320px; max-width: 100%;
-  background: #1a1c1e; border: 2px solid var(--border-strong);
-  border-radius: 28px; padding: 12px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+.iphone-frame {
+  width: 300px; max-width: 100%;
+  background: linear-gradient(145deg, #3a3a3e, #1c1c1e, #3a3a3e);
+  border-radius: 44px;
+  padding: 10px;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.6), 0 0 0 2px #4a4a4e, inset 0 0 0 1px rgba(255,255,255,0.05);
+  position: relative;
 }
-.lead-screen {
-  background: #0f1113; border-radius: 18px; padding: 20px 16px;
+.iphone-notch {
+  width: 100px; height: 26px;
+  background: #0a0a0c;
+  border-radius: 0 0 18px 18px;
+  margin: 0 auto 10px;
 }
+.iphone-screen {
+  background: #0a0a0c;
+  border-radius: 34px;
+  overflow: hidden;
+  padding: 0 0 8px 0;
+}
+.iphone-statusbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 20px 6px;
+  font-size: 12px; font-weight: 600; color: #fff;
+}
+.iphone-time { font-size: 13px; }
+.iphone-icons { display: flex; gap: 5px; align-items: center; font-size: 11px; }
+.iphone-icons svg { width: 14px; height: 14px; }
 .lead-notif {
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius); overflow: hidden;
+  background: #1c1c1e; border-radius: 14px; margin: 6px 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
 }
 .lead-notif-header {
   display: flex; align-items: center; gap: 8px;
-  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  padding: 12px 14px 6px;
 }
-.lead-app-icon { font-size: 16px; }
-.lead-app-name { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; text-align: left; }
-.lead-notif-time { font-size: 11px; color: var(--text-dim); }
-.lead-notif-body { padding: 16px; text-align: left; }
+.lead-app-icon {
+  width: 28px; height: 28px; background: var(--accent); border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: #0b0c0e; font-weight: 800;
+}
+.lead-app-name { font-size: 13px; font-weight: 600; color: #fff; flex: 1; text-align: left; }
+.lead-notif-time { font-size: 11px; color: #8e8e93; }
+.lead-notif-body { padding: 2px 14px 12px; text-align: left; }
 .lead-pill {
   display: inline-block; font-size: 10px; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.05em;
-  background: var(--accent-soft); color: var(--accent-text);
-  padding: 3px 10px; border-radius: 4px; margin-bottom: 10px;
+  background: rgba(234,179,8,0.15); color: var(--accent-text);
+  padding: 3px 10px; border-radius: 4px; margin-bottom: 8px;
 }
 .lead-quote {
-  font-size: 14px; color: var(--text); line-height: 1.5; margin-bottom: 10px;
-  font-style: italic;
+  font-size: 14px; color: #e5e5ea; line-height: 1.45; margin-bottom: 8px;
 }
 .lead-meta-row {
-  display: flex; gap: 16px; font-size: 12px; color: var(--text-dim);
+  display: flex; gap: 16px; font-size: 12px; color: #8e8e93;
 }
 .lead-notif-action {
-  padding: 10px 16px; border-top: 1px solid var(--border);
-  font-size: 12px; font-weight: 600; color: var(--accent); text-align: center;
+  padding: 8px 14px; border-top: 1px solid rgba(255,255,255,0.08);
+  font-size: 12px; font-weight: 600; color: var(--accent); text-align: left;
+}
+.iphone-home {
+  width: 40px; height: 4px;
+  background: #3a3a3e; border-radius: 2px;
+  margin: 8px auto 4px;
 }
 
 /* ===== Trade cloud ===== */
@@ -525,7 +553,7 @@ footer a:hover { color: var(--accent-text); }
 </section>
 
 
-<!-- Sample lead --><section style="padding:60px 0 40px;"><div class="container" style="text-align:center;"><p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent);margin-bottom:16px;">This is what lands on your phone</p><div class="lead-mockup"><div class="lead-phone"><div class="lead-screen"><div class="lead-notif"><div class="lead-notif-header"><span class="lead-app-icon">⚡</span><span class="lead-app-name">LeadDrop</span><span class="lead-notif-time">now</span></div><div class="lead-notif-body"><div class="lead-pill">Plumbing &amp; Gas</div><div class="lead-quote">"Anyone know a good plumber around Yamba? Got a blocked drain that needs sorting ASAP."</div><div class="lead-meta-row"><span>📍 Yamba</span><span>2h ago</span></div></div><div class="lead-notif-action">Tap to view conversation →</div></div></div></div></div></div></section>
+<!-- Sample lead --><section style="padding:60px 0 40px;"><div class="container" style="text-align:center;"><p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent);margin-bottom:24px;">This is what lands on your phone</p><div class="lead-mockup"><div class="iphone-frame"><div class="iphone-notch"></div><div class="iphone-screen"><div class="iphone-statusbar"><span class="iphone-time">9:41</span><span class="iphone-icons"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C17.93 4.07 6.07 4.07 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-6-6l2 2c2.76-2.76 7.24-2.76 10 0l2-2C13.14 7.07 5.86 7.07 3 11z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><rect x="3" y="6" width="2" height="2" rx="0.5"/><rect x="19" y="6" width="2" height="2" rx="0.5"/><rect x="7" y="9" width="10" height="2" rx="1"/></svg></span></div><div class="lead-notif"><div class="lead-notif-header"><div class="lead-app-icon">⚡</div><span class="lead-app-name">LeadDrop</span><span class="lead-notif-time">now</span></div><div class="lead-notif-body"><div class="lead-pill">Plumbing &amp; Gas</div><div class="lead-quote">"Anyone know a good plumber around Yamba? Got a blocked drain that needs sorting ASAP."</div><div class="lead-meta-row"><span>📍 Yamba</span><span>2h ago</span></div></div><div class="lead-notif-action">Tap to view conversation →</div></div></div><div class="iphone-home"></div></div></div></div></section>
 
 <!-- How it works -->
 <section>
