@@ -554,12 +554,12 @@ footer a:hover { color: var(--accent-text); }
   </div>
 </section>
 
-<!-- See it in action -->
+<!-- Get leads in your inbox -->
 <section style="background: var(--bg-elevated);">
   <div class="container">
     <div class="section-header reveal">
-      <h2>See it in action</h2>
-      <p>Enter your details — we'll show you real leads near you.</p>
+      <h2>See what's out there</h2>
+      <p>Tell us your trade and area — we'll hand-pick fresh leads and send them straight to your inbox.</p>
     </div>
     <div class="demo-box reveal">
       <div class="demo-inputs">
@@ -570,12 +570,9 @@ footer a:hover { color: var(--accent-text); }
           <option value="">Pick a category</option>
           <option>Plumbing & Gas</option><option>Electrical</option><option>Building</option><option>Carpentry</option><option>Handyman</option><option>Roofing</option><option>Cleaning</option><option>Landscaping</option><option>Painting</option><option>Tiling</option><option>Concreting</option><option>Pest Control</option><option>HVAC & Solar</option><option>Automotive</option><option>Tech Support</option>
         </select>
-        <button onclick="showDemoLeads()" class="hero-cta" style="white-space:nowrap;">Show me</button>
+        <button onclick="requestLeads()" class="hero-cta" style="white-space:nowrap;">Send me leads</button>
       </div>
       <div id="demo-results" style="margin-top:24px;display:none;"></div>
-      <p style="text-align:center;margin-top:20px;font-size:14px;color:var(--text-dim);">
-        Want the full picture? <a href="#get-started" style="color:var(--accent);text-decoration:underline;">See the conversation →</a>
-      </p>
     </div>
   </div>
 </section>
@@ -972,48 +969,7 @@ var LEAD_CATEGORY_ALIASES = {
   'Automotive': ['automotive', 'mechanic', 'mobile mechanic', 'detailer', 'detailing', 'blue slip', 'car', 'vehicle', 'motorcycle'],
   'Tech Support': ['tech support', 'tech', 'computer', 'laptop', 'ipad', 'iphone', 'wifi', 'internet', 'printer', 'tablet', 'device', 'smart tv']
 };
-
-function getCategoryAliases(category) {
-  var raw = normalizeLeadText(category);
-  var aliases = [];
-
-  Object.keys(LEAD_CATEGORY_ALIASES).forEach(function(label) {
-    var labelNorm = normalizeLeadText(label);
-    if (raw === labelNorm || raw.indexOf(labelNorm) !== -1 || labelNorm.indexOf(raw) !== -1) {
-      aliases = aliases.concat(LEAD_CATEGORY_ALIASES[label]);
-    }
-  });
-
-  if (!aliases.length && raw) aliases.push(raw);
-  return aliases.map(normalizeLeadText).filter(function(value, index, self) { return value && self.indexOf(value) === index; });
-}
-
-function textContainsAlias(text, alias) {
-  var haystack = ' ' + normalizeLeadText(text) + ' ';
-  var needle = normalizeLeadText(alias);
-  if (!haystack.trim() || !needle) return false;
-  if (needle.indexOf(' ') !== -1) return haystack.indexOf(' ' + needle + ' ') !== -1;
-  return haystack.indexOf(' ' + needle + ' ') !== -1;
-}
-
-function displayLeadCategory(rawCategory, fallbackCategory) {
-  var normalized = normalizeLeadText(rawCategory);
-  var fallback = fallbackCategory || rawCategory || 'Lead';
-
-  for (var label in LEAD_CATEGORY_ALIASES) {
-    if (!Object.prototype.hasOwnProperty.call(LEAD_CATEGORY_ALIASES, label)) continue;
-    var labelAliases = [label].concat(LEAD_CATEGORY_ALIASES[label]);
-    for (var i = 0; i < labelAliases.length; i++) {
-      if (normalized === normalizeLeadText(labelAliases[i])) return label;
-    }
-  }
-
-  if (!normalized || normalized === 'other' || normalized === 'handyman') {
-    return fallback;
-  }
-
-  return rawCategory;
-}
+});
 
 function escapeHtml(value) {
   return String(value || '')
@@ -1024,78 +980,7 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-function chooseRealLead(area, category) {
-  var leads = window.__LEADDROP_REAL_LEADS__ || [];
-  if (!leads.length) return null;
-
-  var areaNorm = normalizeLeadText(area);
-  var categoryNorm = normalizeLeadText(category);
-  var categoryAliases = getCategoryAliases(category);
-  var areaTokens = areaNorm ? areaNorm.split(' ') : [];
-  var best = null;
-  var bestScore = -1;
-
-  leads.forEach(function(lead) {
-    var leadLocation = normalizeLeadText(lead.location);
-    var leadGroup = normalizeLeadText(lead.group_name);
-    var leadText = normalizeLeadText(lead.text);
-    var leadSummary = normalizeLeadText(lead.summary);
-    var leadCategory = normalizeLeadText(lead.category);
-    var leadSignals = [leadCategory, leadLocation, leadGroup, leadText, leadSummary].join(' ');
-    var score = 0;
-
-    if (categoryNorm && leadCategory === categoryNorm) {
-      score += 6;
-    } else if (categoryNorm && leadCategory.indexOf(categoryNorm) !== -1) {
-      score += 4;
-    }
-
-    categoryAliases.forEach(function(alias) {
-      if (!alias) return;
-      if (textContainsAlias(leadSignals, alias)) score += 4;
-    });
-
-    if (areaNorm && leadLocation === areaNorm) {
-      score += 8;
-    } else if (areaNorm && leadLocation.indexOf(areaNorm) !== -1) {
-      score += 6;
-    } else if (areaNorm && (leadGroup.indexOf(areaNorm) !== -1 || leadText.indexOf(areaNorm) !== -1)) {
-      score += 4;
-    }
-
-    areaTokens.forEach(function(token) {
-      if (token.length > 2 && (leadLocation.indexOf(token) !== -1 || leadGroup.indexOf(token) !== -1 || leadText.indexOf(token) !== -1)) {
-        score += 1;
-      }
-    });
-
-    if (score > bestScore) {
-      bestScore = score;
-      best = lead;
-    }
-  });
-
-  return best || leads[0];
-}
-
-function renderLeadCard(lead, area, category) {
-  var location = lead.location || area || 'your area';
-  var matchedCategory = displayLeadCategory(lead.category, category);
-  var groupName = lead.group_name || 'LeadDrop';
-  var permalink = lead.post_link || '#';
-  var text = lead.text || lead.summary || 'No lead text available.';
-  return [
-    '<div class="demo-lead">',
-    '<div class="lead-category">'+escapeHtml(matchedCategory)+'</div>',
-    '<div class="lead-text">"'+escapeHtml(text)+'"</div>',
-    '<div class="lead-meta">'+escapeHtml(location)+'</div>',
-    '<a class="lead-link" href="'+escapeHtml(permalink)+'" target="_blank" rel="noopener">View conversation in '+escapeHtml(groupName)+' →</a>',
-    '</div>',
-    '<p class="demo-note">This is a live matched lead from the LeadDrop pool.</p>'
-  ].join('');
-}
-
-function showDemoLeads() {
+function requestLeads() {
   var name = document.getElementById('demo-name').value.trim();
   var email = document.getElementById('demo-email').value.trim();
   var location = document.getElementById('demo-location').value.trim();
@@ -1105,21 +990,23 @@ function showDemoLeads() {
   if (!email) { results.style.display='block'; results.innerHTML='<p style="color:var(--text-muted);text-align:center;">Enter your email first.</p>'; return; }
   if (!location) { results.style.display='block'; results.innerHTML='<p style="color:var(--text-muted);text-align:center;">Tell us your suburb.</p>'; return; }
   if (!category) { results.style.display='block'; results.innerHTML='<p style="color:var(--text-muted);text-align:center;">Pick a category.</p>'; return; }
-  // Notify us of the demo request
+
+  // Notify us
   fetch('https://sapphireagent.com.au/api/leaddrop-demo', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({name:name, email:email, location:location, category:category, source:'demo-form'})
+    body: JSON.stringify({name:name, email:email, location:location, category:category, source:'request-leads'})
   }).catch(function(){});
-  var lead = chooseRealLead(location, category);
-  if (!lead) {
-    results.style.display = 'block';
-    results.innerHTML = '<p style="color:var(--text-muted);text-align:center;">No live leads loaded yet. Refresh or try again in a moment.</p>';
-    return;
-  }
 
-  results.innerHTML = renderLeadCard(lead, location, category);
   results.style.display = 'block';
+  results.innerHTML = [
+    '<div style="text-align:center;padding:32px 16px;">',
+    '<div style="font-size:48px;margin-bottom:16px;">📬</div>',
+    '<h3 style="color:var(--accent-text);margin-bottom:8px;">You\'re on the list</h3>',
+    '<p style="color:var(--text);font-size:15px;max-width:480px;margin:0 auto 16px;">Thanks, ' + escapeHtml(name) + '. Someone from the LeadDrop team will email you shortly with fresh ' + (category ? escapeHtml(category.toLowerCase()) : '') + ' leads near ' + escapeHtml(location) + '. No spam — just real opportunities worth your time.</p>',
+    '<p style="color:var(--text-dim);font-size:13px;">We hand-pick every lead. You\'ll hear from a real person within a few hours.</p>',
+    '</div>'
+  ].join('');
 }
 </script>
 </body>
