@@ -4,18 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="google-site-verification" content="CL2wzgYpo0w4MPz57wq-H-i8xGRvyJeHxoxlWcA-6G4">
-<title>LeadDrop — Local Leads for Trades & Services | Australia</title>
-<meta name="description" content="LeadDrop tracks community conversations across the web and sends you real leads when someone nearby asks for a service you provide. No bidding, no marketplace — just leads.">
+<title>LeadDrop - Real local leads for trades & services</title>
+<meta name="description" content="LeadDrop turns local community posts into real leads for Australian trades and service businesses. Get notified first when someone nearby asks for help.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://leaddrop.com.au/">
-<meta property="og:title" content="LeadDrop — Local leads, dropped.">
-<meta property="og:description" content="We track community conversations so when someone nearby asks for a service you provide, you're the first to know.">
+<meta property="og:title" content="LeadDrop - Real local leads for trades & services">
+<meta property="og:description" content="LeadDrop turns local community posts into real leads for Australian trades and service businesses. Get notified first when someone nearby asks for help.">
 <meta property="og:url" content="https://leaddrop.com.au/">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://leaddrop.com.au/og-image.png">
+<meta property="og:image:alt" content="LeadDrop dashboard showing a lead delivered to a phone">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="LeadDrop — Local leads, dropped.">
-<meta name="twitter:description" content="Real leads from real people asking for services near you. No bidding, no marketplace.">
+<meta name="twitter:title" content="LeadDrop - Real local leads for trades & services">
+<meta name="twitter:description" content="LeadDrop turns local community posts into real leads for Australian trades and service businesses.">
+<meta name="twitter:image" content="https://leaddrop.com.au/og-image.png">
+<meta name="theme-color" content="#0b0c0e">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-76CX8HQWR7"></script>
 <script defer src="real-leads.js"></script>
@@ -230,54 +233,156 @@ nav {
 .demo-lead .lead-link { font-size: 12px; color: var(--accent-text); text-decoration: none; margin-top: 4px; display: inline-block; }
 .demo-note { margin-top: 16px; font-size: 13px; color: var(--accent-text); text-align: center; }
 
-/* ===== Phone notification mockup ===== */
-.lead-mockup { display: flex; justify-content: center; }
+/* ===== Lead mockup (phone notification) ===== */
+.lead-mockup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+.lead-caption {
+  max-width: 440px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
 .lead-phone {
-  width: 360px; max-width: 100%;
-  background: #111; border: 1px solid #2a2a2e;
-  border-radius: 32px; padding: 16px 12px;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+  width: min(390px, 100%);
+  aspect-ratio: 390 / 844;
+  position: relative;
+  border-radius: 54px;
+  padding: 14px;
+  background: linear-gradient(180deg, #090a0c 0%, #17181b 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 32px 80px rgba(0,0,0,0.58),
+    0 0 0 1px rgba(255,255,255,0.04) inset;
+}
+.lead-phone::before,
+.lead-phone::after {
+  content: "";
+  position: absolute;
+  background: #0a0b0d;
+  border-radius: 999px;
+  opacity: 0.95;
+}
+.lead-phone::before {
+  width: 4px; height: 86px;
+  left: -3px; top: 120px;
+  box-shadow: 0 110px 0 #0a0b0d;
+}
+.lead-phone::after {
+  width: 4px; height: 56px;
+  right: -3px; top: 146px;
 }
 .lead-screen {
-  background: #000; border-radius: 20px; padding: 18px 14px;
   position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 40px;
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 32%),
+    linear-gradient(180deg, #0b0d10 0%, #111317 56%, #0d0f12 100%);
 }
-.lead-screen::before {
-  content: ''; display: block; width: 60px; height: 5px;
-  background: #333; border-radius: 3px;
-  margin: 0 auto 12px;
+.lead-notch {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 38%;
+  height: 32px;
+  background: #020203;
+  border-radius: 999px;
+  z-index: 3;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.02) inset;
+}
+.lead-status {
+  position: absolute;
+  top: 14px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.82);
+  z-index: 2;
+  pointer-events: none;
+}
+.lead-status-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255,255,255,0.76);
+}
+.lead-status svg {
+  width: 16px;
+  height: 16px;
 }
 .lead-notif {
-  background: #1c1c1e; border-radius: 14px; overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 80px;
+  background: rgba(18,20,24,0.9);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 28px;
+  overflow: hidden;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.38);
 }
 .lead-notif-header {
-  display: flex; align-items: center; gap: 10px;
-  padding: 14px 16px 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px 12px;
 }
 .lead-app-icon {
-  width: 32px; height: 32px; background: var(--accent); border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; color: #0b0c0e; font-weight: 800; flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+  color: #111827;
+  flex-shrink: 0;
 }
-.lead-app-name { font-size: 14px; font-weight: 600; color: #fff; flex: 1; text-align: left; }
-.lead-notif-time { font-size: 12px; color: #8e8e93; }
-.lead-notif-body { padding: 2px 16px 14px; text-align: left; }
+.lead-app-name { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; text-align: left; }
+.lead-notif-time { font-size: 11px; color: var(--text-dim); }
+.lead-notif-body { padding: 0 16px 16px; text-align: left; }
 .lead-pill {
   display: inline-block; font-size: 10px; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.05em;
-  background: rgba(234,179,8,0.15); color: var(--accent-text);
-  padding: 3px 10px; border-radius: 4px; margin-bottom: 8px;
+  background: var(--accent-soft); color: var(--accent-text);
+  padding: 3px 10px; border-radius: 4px; margin-bottom: 10px;
 }
 .lead-quote {
-  font-size: 15px; color: #e5e5ea; line-height: 1.45; margin-bottom: 8px;
+  font-size: 15px;
+  color: #f4f4ee;
+  line-height: 1.45;
+  margin-bottom: 12px;
+  font-style: italic;
 }
 .lead-meta-row {
-  display: flex; gap: 16px; font-size: 12px; color: #8e8e93;
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.58);
 }
 .lead-notif-action {
-  padding: 10px 16px; border-top: 1px solid rgba(255,255,255,0.06);
-  font-size: 12px; font-weight: 600; color: var(--accent); text-align: left;
+  padding: 11px 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-text);
+  text-align: center;
+  background: rgba(255,255,255,0.02);
 }
 
 /* ===== Trade cloud ===== */
@@ -534,7 +639,7 @@ footer a:hover { color: var(--accent-text); }
 </section>
 
 
-<!-- Sample lead --><section style="padding:60px 0 40px;"><div class="container" style="text-align:center;"><p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent);margin-bottom:24px;">This is what lands on your phone</p><div class="lead-mockup"><div class="lead-phone"><div class="lead-screen"><div class="lead-notif"><div class="lead-notif-header"><div class="lead-app-icon">⚡</div><span class="lead-app-name">LeadDrop</span><span class="lead-notif-time">now</span></div><div class="lead-notif-body"><div class="lead-pill">Plumbing &amp; Gas</div><div class="lead-quote">"Anyone know a good plumber around Yamba? Got a blocked drain that needs sorting ASAP."</div><div class="lead-meta-row"><span>📍 Yamba</span><span>2h ago</span></div></div><div class="lead-notif-action">Tap to view conversation →</div></div></div></div></div></div></section>
+<!-- Sample lead --><section style="padding:60px 0 40px;"><div class="container" style="text-align:center;"><p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent);margin-bottom:16px;">This is what lands on your phone</p><div class="lead-mockup"><div class="lead-phone"><div class="lead-screen"><div class="lead-notch"></div><div class="lead-status"><span>9:41</span><span class="lead-status-icons"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 16h2v2H2zm4-4h2v6H6zm4-4h2v10h-2zm4-4h2v14h-2zm4 8h2v6h-2zm4-4h2v10h-2z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 8.82V15a7 7 0 0 0 7 7h6a7 7 0 0 0 7-7V8.82A15.9 15.9 0 0 1 12 12a15.9 15.9 0 0 1-10-3.18Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 9h20v6H2zM4 7h2v10H4zm14 0h2v10h-2z"/></svg></span></div><div class="lead-notif"><div class="lead-notif-header"><span class="lead-app-icon">⚡</span><span class="lead-app-name">LeadDrop</span><span class="lead-notif-time">now</span></div><div class="lead-notif-body"><div class="lead-pill">Plumbing &amp; Gas</div><div class="lead-quote">"Anyone know a good plumber around Yamba? Got a blocked drain that needs sorting ASAP."</div><div class="lead-meta-row"><span>📍 Yamba</span><span>2h ago</span></div></div><div class="lead-notif-action">Tap to view conversation &rarr;</div></div></div></div><p class="lead-caption">A clean iPhone-style alert with the post, the category, and the location. The whole point is speed: see it, tap it, reply first.</p></div></div></section>
 
 <!-- How it works -->
 <section>
@@ -563,12 +668,12 @@ footer a:hover { color: var(--accent-text); }
   </div>
 </section>
 
-<!-- Get leads in your inbox -->
+<!-- See it in action -->
 <section style="background: var(--bg-elevated);">
   <div class="container">
     <div class="section-header reveal">
-      <h2>See what's out there</h2>
-      <p>Tell us your trade and area — we'll hand-pick fresh leads and send them straight to your inbox.</p>
+      <h2>See it in action</h2>
+      <p>Enter your details — we'll show you real leads near you.</p>
     </div>
     <div class="demo-box reveal">
       <div class="demo-inputs">
@@ -579,9 +684,12 @@ footer a:hover { color: var(--accent-text); }
           <option value="">Pick a category</option>
           <option>Plumbing & Gas</option><option>Electrical</option><option>Building</option><option>Carpentry</option><option>Handyman</option><option>Roofing</option><option>Cleaning</option><option>Landscaping</option><option>Painting</option><option>Tiling</option><option>Concreting</option><option>Pest Control</option><option>HVAC & Solar</option><option>Automotive</option><option>Tech Support</option>
         </select>
-        <button onclick="requestLeads()" class="hero-cta" style="white-space:nowrap;">Send me leads</button>
+        <button onclick="showDemoLeads()" class="hero-cta" style="white-space:nowrap;">Show me</button>
       </div>
       <div id="demo-results" style="margin-top:24px;display:none;"></div>
+      <p style="text-align:center;margin-top:20px;font-size:14px;color:var(--text-dim);">
+        Want the full picture? <a href="#get-started" style="color:var(--accent);text-decoration:underline;">See the conversation →</a>
+      </p>
     </div>
   </div>
 </section>
@@ -644,13 +752,13 @@ footer a:hover { color: var(--accent-text); }
     <div class="pricing-grid reveal">
       <div class="pricing-card highlight">
         <div class="pricing-badge">Core</div>
-        <div class="pricing-price" id="total-price">$49<span>/month</span></div>
+        <div class="pricing-price" id="total-price">$39<span>/month</span></div>
         <p class="pricing-desc">Leads delivered to your phone. Cancel anytime.</p>
         <ul class="pricing-features">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Hourly lead alerts — Telegram or email</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Direct link to every conversation</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Up to 3 service categories</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Australia wide coverage</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Northern Rivers coverage</li>
         </ul>
       </div>
       <div class="upsell-stack">
@@ -697,7 +805,7 @@ footer a:hover { color: var(--accent-text); }
           </div>
           <a id="stripe-link" href="https://buy.stripe.com/8x27sN7dF2S0fy0cPyg7e01" class="hero-cta stripe-btn" onclick="return handleCheckout(event)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            Checkout with Stripe — <span id="checkout-price">$49</span>/mo
+            Checkout with Stripe — <span id="checkout-price">$39</span>/mo
           </a>
         </form>
         <p class="signup-note">Secured by Stripe. Cancel anytime. No lock-in.</p>
@@ -978,7 +1086,48 @@ var LEAD_CATEGORY_ALIASES = {
   'Automotive': ['automotive', 'mechanic', 'mobile mechanic', 'detailer', 'detailing', 'blue slip', 'car', 'vehicle', 'motorcycle'],
   'Tech Support': ['tech support', 'tech', 'computer', 'laptop', 'ipad', 'iphone', 'wifi', 'internet', 'printer', 'tablet', 'device', 'smart tv']
 };
-});
+
+function getCategoryAliases(category) {
+  var raw = normalizeLeadText(category);
+  var aliases = [];
+
+  Object.keys(LEAD_CATEGORY_ALIASES).forEach(function(label) {
+    var labelNorm = normalizeLeadText(label);
+    if (raw === labelNorm || raw.indexOf(labelNorm) !== -1 || labelNorm.indexOf(raw) !== -1) {
+      aliases = aliases.concat(LEAD_CATEGORY_ALIASES[label]);
+    }
+  });
+
+  if (!aliases.length && raw) aliases.push(raw);
+  return aliases.map(normalizeLeadText).filter(function(value, index, self) { return value && self.indexOf(value) === index; });
+}
+
+function textContainsAlias(text, alias) {
+  var haystack = ' ' + normalizeLeadText(text) + ' ';
+  var needle = normalizeLeadText(alias);
+  if (!haystack.trim() || !needle) return false;
+  if (needle.indexOf(' ') !== -1) return haystack.indexOf(' ' + needle + ' ') !== -1;
+  return haystack.indexOf(' ' + needle + ' ') !== -1;
+}
+
+function displayLeadCategory(rawCategory, fallbackCategory) {
+  var normalized = normalizeLeadText(rawCategory);
+  var fallback = fallbackCategory || rawCategory || 'Lead';
+
+  for (var label in LEAD_CATEGORY_ALIASES) {
+    if (!Object.prototype.hasOwnProperty.call(LEAD_CATEGORY_ALIASES, label)) continue;
+    var labelAliases = [label].concat(LEAD_CATEGORY_ALIASES[label]);
+    for (var i = 0; i < labelAliases.length; i++) {
+      if (normalized === normalizeLeadText(labelAliases[i])) return label;
+    }
+  }
+
+  if (!normalized || normalized === 'other' || normalized === 'handyman') {
+    return fallback;
+  }
+
+  return rawCategory;
+}
 
 function escapeHtml(value) {
   return String(value || '')
@@ -989,7 +1138,78 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-function requestLeads() {
+function chooseRealLead(area, category) {
+  var leads = window.__LEADDROP_REAL_LEADS__ || [];
+  if (!leads.length) return null;
+
+  var areaNorm = normalizeLeadText(area);
+  var categoryNorm = normalizeLeadText(category);
+  var categoryAliases = getCategoryAliases(category);
+  var areaTokens = areaNorm ? areaNorm.split(' ') : [];
+  var best = null;
+  var bestScore = -1;
+
+  leads.forEach(function(lead) {
+    var leadLocation = normalizeLeadText(lead.location);
+    var leadGroup = normalizeLeadText(lead.group_name);
+    var leadText = normalizeLeadText(lead.text);
+    var leadSummary = normalizeLeadText(lead.summary);
+    var leadCategory = normalizeLeadText(lead.category);
+    var leadSignals = [leadCategory, leadLocation, leadGroup, leadText, leadSummary].join(' ');
+    var score = 0;
+
+    if (categoryNorm && leadCategory === categoryNorm) {
+      score += 6;
+    } else if (categoryNorm && leadCategory.indexOf(categoryNorm) !== -1) {
+      score += 4;
+    }
+
+    categoryAliases.forEach(function(alias) {
+      if (!alias) return;
+      if (textContainsAlias(leadSignals, alias)) score += 4;
+    });
+
+    if (areaNorm && leadLocation === areaNorm) {
+      score += 8;
+    } else if (areaNorm && leadLocation.indexOf(areaNorm) !== -1) {
+      score += 6;
+    } else if (areaNorm && (leadGroup.indexOf(areaNorm) !== -1 || leadText.indexOf(areaNorm) !== -1)) {
+      score += 4;
+    }
+
+    areaTokens.forEach(function(token) {
+      if (token.length > 2 && (leadLocation.indexOf(token) !== -1 || leadGroup.indexOf(token) !== -1 || leadText.indexOf(token) !== -1)) {
+        score += 1;
+      }
+    });
+
+    if (score > bestScore) {
+      bestScore = score;
+      best = lead;
+    }
+  });
+
+  return best || leads[0];
+}
+
+function renderLeadCard(lead, area, category) {
+  var location = lead.location || area || 'your area';
+  var matchedCategory = displayLeadCategory(lead.category, category);
+  var groupName = lead.group_name || 'LeadDrop';
+  var permalink = lead.post_link || '#';
+  var text = lead.text || lead.summary || 'No lead text available.';
+  return [
+    '<div class="demo-lead">',
+    '<div class="lead-category">'+escapeHtml(matchedCategory)+'</div>',
+    '<div class="lead-text">"'+escapeHtml(text)+'"</div>',
+    '<div class="lead-meta">'+escapeHtml(location)+'</div>',
+    '<a class="lead-link" href="'+escapeHtml(permalink)+'" target="_blank" rel="noopener">View conversation in '+escapeHtml(groupName)+' →</a>',
+    '</div>',
+    '<p class="demo-note">This is a live matched lead from the LeadDrop pool.</p>'
+  ].join('');
+}
+
+function showDemoLeads() {
   var name = document.getElementById('demo-name').value.trim();
   var email = document.getElementById('demo-email').value.trim();
   var location = document.getElementById('demo-location').value.trim();
@@ -999,23 +1219,21 @@ function requestLeads() {
   if (!email) { results.style.display='block'; results.innerHTML='<p style="color:var(--text-muted);text-align:center;">Enter your email first.</p>'; return; }
   if (!location) { results.style.display='block'; results.innerHTML='<p style="color:var(--text-muted);text-align:center;">Tell us your suburb.</p>'; return; }
   if (!category) { results.style.display='block'; results.innerHTML='<p style="color:var(--text-muted);text-align:center;">Pick a category.</p>'; return; }
-
-  // Notify us
+  // Notify us of the demo request
   fetch('https://sapphireagent.com.au/api/leaddrop-demo', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({name:name, email:email, location:location, category:category, source:'request-leads'})
+    body: JSON.stringify({name:name, email:email, location:location, category:category, source:'demo-form'})
   }).catch(function(){});
+  var lead = chooseRealLead(location, category);
+  if (!lead) {
+    results.style.display = 'block';
+    results.innerHTML = '<p style="color:var(--text-muted);text-align:center;">No live leads loaded yet. Refresh or try again in a moment.</p>';
+    return;
+  }
 
+  results.innerHTML = renderLeadCard(lead, location, category);
   results.style.display = 'block';
-  results.innerHTML = [
-    '<div style="text-align:center;padding:32px 16px;">',
-    '<div style="font-size:48px;margin-bottom:16px;">📬</div>',
-    '<h3 style="color:var(--accent-text);margin-bottom:8px;">You are on the list</h3>',
-    '<p style="color:var(--text);font-size:15px;max-width:480px;margin:0 auto 16px;">Thanks, ' + escapeHtml(name) + '. Someone from the LeadDrop team will email you shortly with fresh ' + (category ? escapeHtml(category.toLowerCase()) : '') + ' leads near ' + escapeHtml(location) + '. No spam — just real opportunities worth your time.</p>',
-    '<p style="color:var(--text-dim);font-size:13px;">We hand-pick every lead. You will hear from a real person within a few hours.</p>',
-    '</div>'
-  ].join('');
 }
 </script>
 </body>
