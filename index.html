@@ -648,7 +648,7 @@ footer a:hover { color: var(--accent-text); }
               </div>
             </div>
           </div>
-          <a id="stripe-link" href="https://buy.stripe.com/8x27sN7dF2S0fy0cPyg7e01" class="hero-cta stripe-btn" onclick="return handleCheckout(event)">
+          <a id="stripe-link" href="https://buy.stripe.com/bJe6oJcxZ508gC47veg7e09" class="hero-cta stripe-btn" onclick="return handleCheckout(event)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
             Checkout with Stripe — <span id="checkout-price">$31</span>/mo
           </a>
@@ -800,10 +800,10 @@ function updateTotal() {
 
   // Update Stripe link
   var links = {
-    '00': 'https://buy.stripe.com/8x27sN7dF2S0fy0cPyg7e01',   // Core $39
-    '10': 'https://buy.stripe.com/7sY14peG7bowclOeXGg7e02',   // +SMS $49
-    '01': 'https://buy.stripe.com/dRm9AV41tcsA2LedTCg7e03',   // +Unlimited $49
-    '11': 'https://buy.stripe.com/bJedRbcxZeAIetWg1Kg7e04'    // Both $59
+    '00': 'https://buy.stripe.com/bJe6oJcxZ508gC47veg7e09',   // Core $31
+    '10': 'https://buy.stripe.com/eVqaEZ2Xp0JS3Pi7veg7e0a',   // +SMS $41
+    '01': 'https://buy.stripe.com/3cIdRb55x2S01Ha5n6g7e0b',   // +Unlimited $41
+    '11': 'https://buy.stripe.com/aFa00lapRfEMbhKbLug7e0c'    // Both $51
   };
   var key = (sms ? '1' : '0') + (cats ? '1' : '0');
   document.getElementById('stripe-link').href = links[key];
