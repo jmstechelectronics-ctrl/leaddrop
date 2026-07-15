@@ -597,7 +597,7 @@ footer a:hover { color: var(--accent-text); }
     <div class="pricing-grid reveal">
       <div class="pricing-card highlight">
         <div class="pricing-badge">Core</div>
-        <div class="pricing-price" id="total-price">$39<span>/month</span></div>
+        <div class="pricing-price" id="total-price">$31<span>/month</span></div>
         <p class="pricing-desc">Leads delivered to your phone. Cancel anytime.</p>
         <ul class="pricing-features">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Hourly lead alerts — Telegram or email</li>
@@ -791,7 +791,7 @@ function addSelectedCategory(value) {
 }
 
 function updateTotal() {
-  var base = 39;
+  var base = 31;
   var sms = document.querySelector('#upsell-sms .upsell-toggle').checked;
   var cats = document.querySelector('#upsell-categories .upsell-toggle').checked;
   var total = base + (sms ? 10 : 0) + (cats ? 10 : 0);
