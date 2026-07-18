@@ -1064,21 +1064,23 @@ function showDemoLeads() {
   if (!email) { results.style.display='block'; results.innerHTML='<p style="color:var(--text-muted);text-align:center;">Enter your email first.</p>'; return; }
   if (!location) { results.style.display='block'; results.innerHTML='<p style="color:var(--text-muted);text-align:center;">Tell us your suburb.</p>'; return; }
   if (!category) { results.style.display='block'; results.innerHTML='<p style="color:var(--text-muted);text-align:center;">Pick a category.</p>'; return; }
-  // Notify us of the demo request
+  // Record demo request
   fetch('https://sapphireagent.com.au/api/leaddrop-demo', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({name:name, email:email, location:location, category:category, source:'demo-form'})
   }).catch(function(){});
-  var lead = chooseRealLead(location, category);
-  if (!lead) {
-    results.style.display = 'block';
-    results.innerHTML = '<p style="color:var(--text-muted);text-align:center;">No live leads loaded yet. Refresh or try again in a moment.</p>';
-    return;
-  }
-
-  results.innerHTML = renderLeadCard(lead, location, category);
+  // Send to info@leaddrop
+  fetch('https://formsubmit.co/ajax/info@leaddrop.com.au', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+    body: JSON.stringify({name:name, email:email, location:location, category:category, _subject:'New LeadDrop demo request', _template:'table'})
+  }).catch(function(){});
+  // Confirmation — no lead display
   results.style.display = 'block';
+  results.innerHTML = '<div class="demo-lead" style="text-align:center;padding:32px;">'
+    + '<p style="font-size:16px;color:var(--text);margin-bottom:8px;">Thanks ' + escapeHtml(name.split(' ')[0]) + ' — we got your details.</p>'
+    + '<p style="font-size:14px;color:var(--text-muted);">We\'ll send a sample ' + escapeHtml(category) + ' lead to ' + escapeHtml(email) + ' when one pops up near ' + escapeHtml(location) + '.</p></div>';
 }
 </script>
 </body>
