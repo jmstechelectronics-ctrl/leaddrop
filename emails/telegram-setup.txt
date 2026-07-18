@@ -1,5 +1,5 @@
-{subject: "Set up Telegram alerts / LeadDrop"}
-{body:
+{subject}"Set up Telegram alerts / LeadDrop"{/subject}
+{body}
 <p style="color:#7a7a75;font-size:16px;line-height:1.7;margin:0 0 20px;">
   G'day {name},
 </p>

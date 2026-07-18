@@ -12,8 +12,6 @@ Usage:
     python3 email_engine.py admin-signup --name "John" --business "Smith Electrical" \\
         --email "john@example.com" --phone "0412..." --categories "Plumbing, Electrical" \\
         --amount 49
-    python3 email_engine.py daily-digest --email "josh@jmstechsupport.com.au" \\
-        --date "2026-07-04" --new-today 3 --total-subscribers 24 --mrr 744 --leads-today 18
 """
 import argparse
 import json
@@ -33,21 +31,17 @@ SMTP_PORT = 465
 FROM_EMAIL = "LeadDrop <info@leaddrop.com.au>"
 FROM_ADDR = "info@leaddrop.com.au"
 PASS_FILE = Path(os.path.expanduser("~/.config/leaddrop/smtp-pass.txt"))
-DIGEST_EMAIL = "josh@jmstechsupport.com.au"
 
 # ── Template engine ──────────────────────────────────────────
 def load_template(name: str) -> dict:
     """Load template file, return {subject, body}."""
     path = EMAILS_DIR / f"{name}.txt"
     text = path.read_text()
-    # Parse {subject: ...} and {body: ...}{/body}
-    subj = re.search(r'\{subject:\s*(.+?)\}', text, re.DOTALL)
-    body = re.search(r'\{body:\s*(.+?)\}\{/body\}', text, re.DOTALL)
-    subject = subj.group(1).strip().replace('\n', ' ') if subj else ""
-    if len(subject) >= 2 and subject[0] == subject[-1] and subject[0] in {'"', "'"}:
-        subject = subject[1:-1]
+    # Parse {subject}...{/subject} and {body}...{/body}
+    subj = re.search(r'\{subject\}\s*(.+?)\{/subject\}', text, re.DOTALL)
+    body = re.search(r'\{body\}\s*(.+?)\{/body\}', text, re.DOTALL)
     return {
-        "subject": subject,
+        "subject": subj.group(1).strip().replace('\n', ' ') if subj else "",
         "body": body.group(1).strip() if body else text,
     }
 
@@ -68,15 +62,6 @@ def render(template_name: str, **kwargs) -> tuple[str, str]:
     # Insert body into layout
     html = layout.replace("{subject}", subject).replace("{body}", body)
     return subject, html
-
-def require_digest_recipient(template_name: str, to_email: str) -> str:
-    """Hard-lock digest mail to a single recipient."""
-    if template_name == "daily-digest":
-        recipient = to_email.strip().lower()
-        if recipient != DIGEST_EMAIL:
-            raise ValueError(f"daily-digest can only be sent to {DIGEST_EMAIL}")
-        return DIGEST_EMAIL
-    return to_email
 
 # ── SMTP sender ──────────────────────────────────────────────
 def send(to_email: str, subject: str, html: str) -> bool:
@@ -106,7 +91,7 @@ def send(to_email: str, subject: str, html: str) -> bool:
 # ── CLI ──────────────────────────────────────────────────────
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="LeadDrop Email Engine")
-    parser.add_argument("template", choices=["welcome", "lead", "admin-signup", "telegram-setup", "daily-digest"])
+    parser.add_argument("template", choices=["welcome", "lead", "admin-signup", "telegram-setup"])
     parser.add_argument("--email", required=True, help="Recipient email")
     parser.add_argument("--name", default="", help="Customer name")
     parser.add_argument("--business", default="", help="Business name")
@@ -121,25 +106,18 @@ if __name__ == "__main__":
     parser.add_argument("--lead-count", default="1", help="Leads matched today")
     parser.add_argument("--category-count", default="0", help="Number of categories")
     parser.add_argument("--subscriber-id", default="", help="Subscriber identifier for Telegram linking")
-    parser.add_argument("--date", default="", help="Digest date")
-    parser.add_argument("--new-today", default="", help="New signups today")
-    parser.add_argument("--total-subscribers", default="", help="Total subscriber count")
-    parser.add_argument("--mrr", default="", help="Monthly recurring revenue")
-    parser.add_argument("--leads-today", default="", help="Leads detected today")
-    parser.add_argument("--new-signup-block", default="", help="Prebuilt HTML block for new signups")
     parser.add_argument("--dry-run", action="store_true", help="Print HTML, don't send")
 
     args = parser.parse_args()
     kwargs = {k: v for k, v in vars(args).items() if v is not None}
     template_name = kwargs.pop("template")
     dry_run = kwargs.pop("dry_run")
-    email = kwargs.pop("email")
-    email = require_digest_recipient(template_name, email)
+    del kwargs["email"]  # handled separately
     
-    subject, html = render(template_name, email=email, **kwargs)
+    subject, html = render(template_name, email=args.email, **kwargs)
     
     if dry_run:
         print(f"SUBJECT: {subject}")
         print(f"HTML: {html[:1000]}...")
     else:
-        send(email, subject, html)
+        send(args.email, subject, html)

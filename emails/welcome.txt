@@ -1,5 +1,5 @@
-{subject: "Welcome to LeadDrop / What happens next"}
-{body:
+{subject}Welcome to LeadDrop — What happens next{/subject}
+{body}
 <p style="color:#7a7a75;font-size:16px;line-height:1.7;margin:0 0 20px;">
   G'day {name},
 </p>
@@ -7,9 +7,8 @@
   Welcome aboard. Your LeadDrop subscription is active and your detection engine is already listening across {category_count} categories in the Northern Rivers.
 </p>
 
-<!-- Feature cards -->
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0;">
-  <tr><td style="background:#18191b;border-radius:8px;padding:20px;margin-bottom:12px;">
+  <tr><td style="background:#18191b;border-radius:8px;padding:20px;">
     <p style="color:#eab308;font-weight:700;font-size:14px;margin:0 0 6px;">⚡ Hourly lead alerts</p>
     <p style="color:#7a7a75;font-size:14px;margin:0;line-height:1.6;">Leads are delivered to your email every hour. When someone posts a service request matching your categories, you'll know.</p>
   </td></tr>
@@ -22,7 +21,6 @@
   </td></tr>
 </table>
 
-<!-- CTA -->
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0;">
   <tr><td align="center">
     <a href="mailto:info@leaddrop.com.au?subject=Setup Telegram alerts" style="display:inline-block;background:#eab308;color:#000;padding:14px 36px;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;">Reply to set up Telegram</a>
@@ -39,4 +37,4 @@
   Cheers,<br>
   <strong style="color:#eab308;">LeadDrop</strong>
 </p>
-}{/body}
+{/body}

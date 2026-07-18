@@ -1,9 +1,9 @@
-{subject: "New lead — {category} / {location}"}
-{body:
+{subject}New lead — {category} / {location}{/subject}
+{body}
 <span style="display:inline-block;background:rgba(234,179,8,0.12);color:#facc15;padding:4px 12px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;">{category}</span>
 
 <p style="color:#f0f0ec;font-size:18px;line-height:1.5;margin:16px 0 8px;">
-  "{lead_text}"
+  "{lead}"
 </p>
 
 <p style="color:#5c5c57;font-size:13px;margin:0 0 20px;">
@@ -20,6 +20,6 @@
   Reply to be first in line. Most leads get 3-5 replies — speed matters.
 </p>
 <p style="color:#5c5c57;font-size:11px;margin:16px 0 0;">
-  {lead_count} lead{if multiple}s{/if} matched today &middot; <a href="mailto:info@leaddrop.com.au?subject=Adjust categories" style="color:#7a7a75;">Adjust your categories</a>
+  {lead_count} leads matched today &middot; <a href="mailto:info@leaddrop.com.au?subject=Adjust categories" style="color:#7a7a75;">Adjust your categories</a>
 </p>
-}{/body}
+{/body}

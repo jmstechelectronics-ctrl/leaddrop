@@ -1,5 +1,5 @@
-{subject: "New LeadDrop signup — {name} / {categories}"}
-{body:
+{subject}New LeadDrop signup — {name} / {categories}{/subject}
+{body}
 <p style="color:#f0f0ec;font-size:18px;margin:0 0 8px;">
   💰 New subscriber: <strong>{name}</strong>
 </p>
@@ -40,4 +40,4 @@
     </td>
   </tr>
 </table>
-}{/body}
+{/body}
