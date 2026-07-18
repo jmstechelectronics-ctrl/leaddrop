@@ -49,6 +49,42 @@
   --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #fafaf9;
+    --bg-elevated: #f2f0ed;
+    --bg-card: #ffffff;
+    --text: #1a1a18;
+    --text-muted: #6b6b65;
+    --text-dim: #9a9a94;
+    --accent-text: #a68a00;
+    --border: rgba(0,0,0,0.06);
+    --border-strong: rgba(0,0,0,0.10);
+  }
+}
+
+.logo-light { display: none; }
+.logo-dark { display: block; }
+@media (prefers-color-scheme: light) {
+  .logo-dark { display: none; }
+  .logo-light { display: block; }
+  nav { background: rgba(250,250,249,0.85); }
+  meta[name="theme-color"] { content: #fafaf9; }
+}
+
+.hero-banner {
+  max-width: 800px; width: 100%;
+  margin: 0 auto 32px;
+  display: block;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+@media (prefers-color-scheme: dark) {
+  .hero-banner {
+    box-shadow: none;
+  }
+}
+
 
 /* ===== Reset ===== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -101,11 +137,6 @@ nav {
 .hero {
   padding: 120px 0 60px;
   text-align: center;
-}
-.hero-banner {
-  max-width: 800px; width: 100%;
-  margin: 0 auto 32px;
-  display: block;
 }
 .hero-badge {
   display: inline-flex; align-items: center; gap: 8px;
@@ -454,7 +485,8 @@ footer a:hover { color: var(--accent-text); }
 <nav>
   <div class="nav-inner">
     <a href="#" class="logo">
-      <img src="logo-nav.svg" alt="LeadDrop" style="height:50px;">
+      <img src="logo-nav.svg" alt="LeadDrop" class="logo-dark" style="height:50px;">
+      <img src="navi_logo.svg" alt="LeadDrop" class="logo-light" style="height:50px;">
     </a>
     <a href="#get-started" class="nav-cta">Get started</a>
   </div>
