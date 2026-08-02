@@ -479,7 +479,7 @@ footer a:hover { color: var(--accent-text); }
         <div class="stat-label">Lead delivery</div>
       </div>
       <div class="stat-card">
-        <div class="stat-num">33</div>
+        <div class="stat-num">34</div>
         <div class="stat-label">Service categories</div>
       </div>
     </div>
@@ -527,7 +527,7 @@ footer a:hover { color: var(--accent-text); }
         <input type="text" id="demo-location" placeholder="Your suburb" style="padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font);width:140px;flex-shrink:0;">
         <select id="demo-category" style="padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font);cursor:pointer;">
           <option value="">Pick a category</option>
-          <option>Plumbing & Gas</option><option>Electrical</option><option>Building</option><option>Carpentry</option><option>Handyman</option><option>Roofing</option><option>Cleaning</option><option>Landscaping</option><option>Painting</option><option>Tiling</option><option>Concreting</option><option>Pest Control</option><option>HVAC & Solar</option><option>Automotive</option><option>Tech Support</option>
+          <option>Plumbing & Gas</option><option>Electrical</option><option>Building</option><option>Carpentry</option><option>Handyman</option><option>Roofing</option><option>Cleaning</option><option>Landscaping</option><option>Arborist</option><option>Painting</option><option>Tiling</option><option>Concreting</option><option>Pest Control</option><option>HVAC & Solar</option><option>Automotive</option><option>Tech Support</option>
         </select>
         <button onclick="showDemoLeads()" class="hero-cta" style="white-space:nowrap;">Show me</button>
       </div>
@@ -577,7 +577,7 @@ footer a:hover { color: var(--accent-text); }
       <a href="category/plumbing-leads.html" class="trade-tag">Plumbing &amp; Gas</a><a href="category/electrical-leads.html" class="trade-tag">Electrical</a><a href="category/building-leads.html" class="trade-tag">Building</a>
       <a href="category/painting-leads.html" class="trade-tag">Painting</a><a href="category/carpentry-leads.html" class="trade-tag">Carpentry</a><a href="category/roofing-leads.html" class="trade-tag">Roofing</a>
       <a href="category/tiling-leads.html" class="trade-tag">Tiling</a><span class="trade-tag">Plastering</span><a href="category/concreting-leads.html" class="trade-tag">Concreting</a>
-      <span class="trade-tag">Earthmoving</span><a href="category/landscaping-leads.html" class="trade-tag">Landscaping</a><span class="trade-tag">Gardening</span>
+      <span class="trade-tag">Earthmoving</span><a href="category/landscaping-leads.html" class="trade-tag">Landscaping</a><span class="trade-tag">Arborists</span><span class="trade-tag">Gardening</span>
       <a href="category/cleaning-leads.html" class="trade-tag">Cleaning</a><a href="category/pest-control-leads.html" class="trade-tag">Pest Control</a><a href="category/hvac-leads.html" class="trade-tag">HVAC &amp; Solar</a>
       <a href="category/automotive-leads.html" class="trade-tag">Automotive</a><span class="trade-tag">Locksmiths</span><span class="trade-tag">Fencing</span>
       <span class="trade-tag">Welding</span><span class="trade-tag">Glazing</span><span class="trade-tag">Cabinetmaking</span>
@@ -613,7 +613,7 @@ footer a:hover { color: var(--accent-text); }
           <input type="checkbox" class="upsell-toggle" onchange="updateTotal()">
         </label>
         <label class="upsell-card" id="upsell-categories">
-          <div class="upsell-left"><div class="upsell-check"></div><div><div class="upsell-title">Unlimited categories</div><div class="upsell-desc">Monitor all 33 service categories. Catch every opportunity.</div></div></div>
+          <div class="upsell-left"><div class="upsell-check"></div><div><div class="upsell-title">Unlimited categories</div><div class="upsell-desc">Monitor all 34 service categories. Catch every opportunity.</div></div></div>
           <div class="upsell-price">+$10<span>/mo</span></div>
           <input type="checkbox" class="upsell-toggle" onchange="updateTotal()">
         </label>
@@ -689,6 +689,7 @@ var CATEGORY_OPTIONS = [
   { value: 'Roofing', label: 'Roofing', group: 'Core trades', helper: 'Leaks, gutters, storm damage' },
   { value: 'Cleaning', label: 'Cleaning', group: 'Core trades', helper: 'Bond cleans, pressure cleaning' },
   { value: 'Landscaping', label: 'Landscaping', group: 'Core trades', helper: 'Turf, mowing, retaining walls' },
+  { value: 'Arborist', label: 'Arborist', group: 'Core trades', helper: 'Tree removal, lopping, stump grinding' },
   { value: 'Painting', label: 'Painting', group: 'More categories', helper: 'Interior and exterior repaints' },
   { value: 'Tiling', label: 'Tiling', group: 'More categories', helper: 'Bathrooms, splashbacks, floors' },
   { value: 'Concreting', label: 'Concreting', group: 'More categories', helper: 'Driveways, slabs, paths' },
@@ -925,6 +926,7 @@ var LEAD_CATEGORY_ALIASES = {
   'Tiling': ['tiling', 'tiler', 'tile', 'tiles', 'grout', 'splashback', 'bathroom renovation'],
   'Concreting': ['concreting', 'concrete', 'concretor', 'driveway', 'slab', 'footing', 'path'],
   'Landscaping': ['landscaping', 'landscaper', 'landscape', 'gardener', 'gardening', 'retaining wall', 'turf', 'garden bed', 'pressure clean and mow', 'mow', 'lawn'],
+  'Arborist': ['arborist', 'tree lopper', 'tree removal', 'stump grinding', 'stump grinder', 'tree pruning', 'tree trimming'],
   'Cleaning': ['cleaning', 'cleaner', 'house cleaner', 'end of lease', 'bond clean', 'carpet clean', 'pressure clean', 'roof cleaning', 'solar panel cleaning'],
   'Pest Control': ['pest control', 'pest', 'termite', 'termites', 'cockroach', 'cockroaches', 'ant', 'ants', 'spider', 'wasp'],
   'HVAC & Solar': ['hvac', 'air conditioning', 'aircon', 'air conditioner', 'air conditioner installer', 'electrical and solar', 'solar', 'solar installer', 'battery', 'refrigeration', 'conditioning'],
