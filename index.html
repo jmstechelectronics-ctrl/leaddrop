@@ -89,14 +89,22 @@
       var signup = document.getElementById('signup');
       var signupForm = document.getElementById('signup-form');
       var signupError = document.getElementById('signup-error');
+      signupError.tabIndex = -1;
       var signupStatus = document.getElementById('signup-status');
       var submitButton = document.getElementById('stripe-submit');
       var profileStarted = false;
       var signupStarted = false;
       var isSubmitting = false;
+      var onboardingKey = '';
+      var categoryList = ['Plumbing & Gas','Electrical','Building','Carpentry','Handyman','Roofing','Cleaning','Landscaping','Painting','Tiling','Concreting','Plastering','Earthmoving','Gardening','Pest Control','HVAC & Solar','Automotive','Locksmiths','Fencing','Welding','Glazing','Cabinetmaking','Flooring','Waterproofing','Tech Support','Rubbish Removal','Other service'];
+      var extraCategories = [];
       var stripeLinks = { '00':'https://buy.stripe.com/bJe6oJcxZ508gC47veg7e09', '10':'https://buy.stripe.com/eVqaEZ2Xp0JS3Pi7veg7e0a', '01':'https://buy.stripe.com/3cIdRb55x2S01Ha5n6g7e0b', '11':'https://buy.stripe.com/aFa00lapRfEMbhKbLug7e0c' };
       function track(eventName) { if (typeof window.gtag === 'function') window.gtag('event', eventName); }
       function workType() { return document.querySelector('input[name="work-type"]:checked').value; }
+      function categoryValues() { var primary = document.getElementById('category').value; return primary ? [primary].concat(extraCategories) : []; }
+      function unlimitedEnabled() { return document.getElementById('signup-categories').checked; }
+      function renderCategories() { var host=document.getElementById('category-controls'), primary=document.getElementById('category').value, count=categoryValues().length, max=unlimitedEnabled()?categoryList.length:3; host.querySelector('.category-count').textContent=count+' selected · '+(unlimitedEnabled()?'Unlimited categories enabled':'Up to 3 included'); host.querySelector('.category-chips').innerHTML=extraCategories.map(function(c){return '<button type="button" class="category-chip" aria-label="Remove '+c.replace(/&/g,'and')+'" data-category="'+c.replace(/&/g,'&amp;')+'">'+c+' ×</button>';}).join(''); host.querySelector('.category-add').disabled=!primary||count>=max; host.querySelector('.category-help').textContent=!unlimitedEnabled()&&count>=3?'Your plan includes three categories. Select Unlimited categories to add more.':''; }
+      function setupCategories() { var primary=document.getElementById('category'), label=primary.closest('label'); categoryList.forEach(function(c){if(!Array.prototype.some.call(primary.options,function(o){return o.value===c;})){var o=document.createElement('option');o.value=c;o.textContent=c;primary.appendChild(o);}}); var host=document.createElement('div');host.id='category-controls';host.className='full';host.innerHTML='<p class="category-count" aria-live="polite"></p><label><span>Add service category</span><select class="category-add" aria-label="Add service category"><option value="">Choose another category</option></select></label><div class="category-chips" aria-label="Additional selected categories"></div><p class="category-help validation" aria-live="polite"></p>'; label.parentNode.insertBefore(host,label.nextSibling); var add=host.querySelector('.category-add'); categoryList.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;add.appendChild(o);}); primary.addEventListener('change',function(){extraCategories=extraCategories.filter(function(c){return c!==primary.value;});renderCategories();updateProfile();}); add.addEventListener('change',function(){if(add.value&&!extraCategories.includes(add.value)&&add.value!==primary.value){extraCategories.push(add.value);add.value='';renderCategories();updateProfile();}});host.addEventListener('click',function(e){var b=e.target.closest('[data-category]');if(b){extraCategories=extraCategories.filter(function(c){return c!==b.getAttribute('data-category');});renderCategories();updateProfile();}}); renderCategories(); }
       function profileText() {
         var area = document.getElementById('area').value.trim();
         var radius = document.getElementById('radius').value;
@@ -112,7 +120,7 @@
       }
       function updateProfile() { summary.textContent = profileText(); }
       function saveProfile() {
-        var data = { area:document.getElementById('area').value.trim(), radius:document.getElementById('radius').value, category:document.getElementById('category').value, services:document.getElementById('services').value.trim(), workType:workType(), exclusions:document.getElementById('exclusions').value.trim() };
+        var data = { area:document.getElementById('area').value.trim(), radius:document.getElementById('radius').value, category:document.getElementById('category').value, additionalCategories:extraCategories, services:document.getElementById('services').value.trim(), workType:workType(), exclusions:document.getElementById('exclusions').value.trim() };
         try { sessionStorage.setItem('leaddrop-profile', JSON.stringify(data)); } catch (e) {}
         return data;
       }
@@ -126,6 +134,13 @@
       profileFields.forEach(function (field) { field.addEventListener('input', updateProfile); field.addEventListener('change', updateProfile); field.addEventListener('focus', function () { if (!profileStarted) { profileStarted = true; track('custom_lead_profile_started'); } }, { once:true }); });
       document.querySelectorAll('input[name="work-type"]').forEach(function (item) { item.addEventListener('change', updateProfile); });
       document.getElementById('reset-profile').textContent = 'Clear profile';
+      setupCategories();
+      var nav=document.querySelector('nav .nav-inner'); if(nav&&!document.getElementById('desktop-nav-links')){var links=document.createElement('div');links.id='desktop-nav-links';links.className='desktop-nav-links';links.innerHTML='<a href="#how-it-works">How it works</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>';nav.insertBefore(links,nav.querySelector('.nav-cta'));}
+      document.querySelectorAll('section').forEach(function(s){var h=s.querySelector('h2');if(h&&h.textContent.indexOf('How LeadDrop works')!==-1)s.id='how-it-works';if(h&&h.textContent.indexOf('Questions before')!==-1)s.id='faq';});
+      document.querySelectorAll('.feature-list li').forEach(function(li){if(li.textContent.trim()==='Selected service categories')li.textContent='Up to 3 service categories';});
+      document.querySelectorAll('details').forEach(function(d){d.addEventListener('toggle',function(){if(d.open)track('faq_opened');});});
+      var sample=document.getElementById('sample-lead'); if(sample){sample.addEventListener('mouseenter',function(){track('sample_lead_viewed');},{once:true}); var tags=sample.querySelectorAll('.tag');if(tags[0])tags[0].textContent='Example LeadDrop alert'; var top=sample.querySelector('.alert-top span:last-child');if(top)top.remove();var note=sample.querySelector('.example-note:last-child');if(note)note.textContent='Illustrative example. Actual alerts and lead volume vary by location and service category.';}
+      document.querySelectorAll('a[href="#profile-builder"]').forEach(function(a){a.addEventListener('click',function(){track('pricing_cta_clicked');});});
       document.getElementById('reset-profile').addEventListener('click', function () { profileForm.reset(); profileError.textContent = ''; signup.hidden = true; updateProfile(); document.getElementById('area').focus(); });
       profileForm.addEventListener('submit', function (event) {
         event.preventDefault();
@@ -138,12 +153,16 @@
         signup.scrollIntoView({ behavior:'smooth', block:'start' });
         document.getElementById('signup-name').focus({ preventScroll:true });
       });
-      ['signup-sms','signup-categories'].forEach(function (id) { document.getElementById(id).addEventListener('change', updatePrice); });
+      var privacy=document.createElement('label');privacy.className='signup-note';privacy.innerHTML='<input id="privacy-acknowledged" type="checkbox" required> I agree to the <a href="/terms.html">LeadDrop Terms</a> and acknowledge the <a href="/privacy.html">Privacy Policy</a>.';submitButton.parentNode.insertBefore(privacy,submitButton);
+      document.getElementById('signup-categories').closest('.signup-option').querySelector('strong').textContent='Unlimited categories';
+      document.getElementById('signup-categories').closest('.signup-option').querySelector('br').nextSibling.textContent=' Monitor additional service categories as part of your Custom Lead Profile.';
+      ['signup-sms','signup-categories'].forEach(function (id) { document.getElementById(id).addEventListener('change', function(){ updatePrice(); renderCategories(); }); });
       signupForm.addEventListener('focusin', function () { if (!signupStarted) { signupStarted = true; track('signup_started'); } });
       signupForm.addEventListener('submit', async function (event) {
         event.preventDefault();
         if (isSubmitting) return;
-        if (!signupForm.checkValidity()) { signupError.textContent = 'Please complete your name, business name, email and phone before checkout.'; signupForm.reportValidity(); return; }
+        if (!signupForm.checkValidity()) { signupError.textContent = 'Please complete your contact details and agree to the Terms and Privacy Policy before checkout.'; signupError.focus(); signupForm.reportValidity(); return; }
+        if (!unlimitedEnabled() && categoryValues().length > 3) { signupError.textContent='Remove categories until only three remain, or select Unlimited categories.'; signupError.focus(); return; }
         var profile = saveProfile();
         var price = updatePrice();
         var payload = {
@@ -158,14 +177,13 @@
           work_type: profile.workType,
           exclusions: profile.exclusions,
           sms_addon: document.getElementById('signup-sms').checked,
-          category_addon: document.getElementById('signup-categories').checked,
-          additional_categories: [],
-          monthly_total_aud: price.total,
-          stripe_payment_link: price.stripeLink,
-          source: 'LeadDrop website signup',
-          submission_timestamp: new Date().toISOString()
+          unlimited_categories_addon: document.getElementById('signup-categories').checked,
+          additional_categories: profile.additionalCategories || [],
+          privacy_acknowledged: document.getElementById('privacy-acknowledged').checked,
+          idempotency_key: onboardingKey || (onboardingKey = (window.crypto && crypto.randomUUID ? crypto.randomUUID() : '00000000-0000-4000-8000-'+Date.now().toString().padStart(12,'0'))),
+          source: 'leaddrop.com.au'
         };
-        isSubmitting = true;
+        track('onboarding_submission_started'); isSubmitting = true;
         submitButton.disabled = true;
         submitButton.textContent = 'Saving your setup…';
         signupError.textContent = '';
@@ -173,14 +191,13 @@
         try {
           var response = await fetch('/api/leaddrop-onboarding', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(payload) });
           var result = await response.json().catch(function () { return {}; });
-          if (!response.ok || !result.success || !result.onboarding_id) throw new Error(result.message || 'We could not save your setup. Please try again.');
-          var checkoutUrl = new URL(result.stripe_payment_link || price.stripeLink);
-          checkoutUrl.searchParams.set('client_reference_id', result.onboarding_id);
-          checkoutUrl.searchParams.set('prefilled_email', payload.email);
+          if (!response.ok || !result.success || !result.checkout_url) throw new Error((result.field_errors && Object.values(result.field_errors)[0]) || result.message || 'We could not save your setup. Please try again.');
+          var checkoutUrl = new URL(result.checkout_url);
+          track('onboarding_submission_succeeded');
           track('stripe_checkout_opened');
           window.location.assign(checkoutUrl.toString());
         } catch (error) {
-          signupError.textContent = error && error.message ? error.message : 'We could not save your setup. Please try again.';
+          track('onboarding_submission_failed'); signupError.textContent = error && error.message ? error.message : 'We could not save your setup. Please try again.';
           signupStatus.textContent = '';
           isSubmitting = false;
           submitButton.disabled = false;

@@ -1,21 +1,37 @@
+const CATEGORIES = ['Plumbing & Gas','Electrical','Building','Carpentry','Handyman','Roofing','Cleaning','Landscaping','Painting','Tiling','Concreting','Plastering','Earthmoving','Gardening','Pest Control','HVAC & Solar','Automotive','Locksmiths','Fencing','Welding','Glazing','Cabinetmaking','Flooring','Waterproofing','Tech Support','Rubbish Removal','Other service'];
 const LINKS = {'00':['https://buy.stripe.com/bJe6oJcxZ508gC47veg7e09',31],'10':['https://buy.stripe.com/eVqaEZ2Xp0JS3Pi7veg7e0a',41],'01':['https://buy.stripe.com/3cIdRb55x2S01Ha5n6g7e0b',41],'11':['https://buy.stripe.com/aFa00lapRfEMbhKbLug7e0c',51]};
-const value = (item, maximum) => String(item || '').trim().replace(/\s+/g, ' ').slice(0, maximum);
-const failure = (field, message) => Response.json({success:false, field, message}, {status:400});
+const clean=(v,max)=>typeof v==='string'?v.trim().replace(/\s+/g,' ').slice(0,max):'';
+const json=(body,status)=>Response.json(body,{status,headers:{'Cache-Control':'no-store'}});
+const fail=(field,message)=>json({success:false,field_errors:{[field]:message}},400);
+let schemaReady;
 
-export async function onRequestPost({request, env}) {
-  if (!env.ONBOARDING_DB) return Response.json({success:false,message:'We could not save your setup. Please try again.'},{status:500});
-  const origin = request.headers.get('Origin');
-  if (origin && origin !== 'https://leaddrop.com.au') return new Response('Forbidden',{status:403});
-  let body; try { body = await request.json(); } catch { return failure('', 'Please check your details and try again.'); }
-  const name=value(body.name,100), business=value(body.business_name,160), email=value(body.email,254).toLowerCase(), phone=value(body.phone,32), area=value(body.service_area,160), category=value(body.primary_category,100), services=value(body.preferred_services,500), exclusions=value(body.exclusions,500), work=value(body.work_type,20), radius=Number(body.service_radius_km);
-  if (!name) return failure('name','Enter your name.'); if (!business) return failure('business_name','Enter your business name.');
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return failure('email','Enter a valid email address.');
-  if (!/^[+()\d\s-]{8,32}$/.test(phone)) return failure('phone','Enter a valid phone number.');
-  if (!area) return failure('service_area','Enter your service area.'); if (![20,30,40,60,100].includes(radius)) return failure('service_radius_km','Choose an available service radius.');
-  if (!category || !services || !['residential','commercial','both'].includes(work)) return failure('profile','Complete your Custom Lead Profile.');
-  const sms=Boolean(body.sms_addon), categories=Boolean(body.category_addon), [link,total]=LINKS[`${sms?1:0}${categories?1:0}`], id=`ld_${crypto.randomUUID().replaceAll('-','')}`;
-  try {
-    await env.ONBOARDING_DB.prepare('INSERT INTO onboarding_records (onboarding_id,status,name,business_name,email,phone,service_area,service_radius_km,primary_category,preferred_services,work_type,exclusions,sms_addon,category_addon,additional_categories,monthly_total_aud,stripe_payment_link,source,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id,'pending_payment',name,business,email,phone,area,radius,category,services,work,exclusions,sms?1:0,categories?1:0,'[]',total,link,'LeadDrop website signup',new Date().toISOString()).run();
-    return Response.json({success:true,onboarding_id:id,stripe_payment_link:link});
-  } catch { return Response.json({success:false,message:'We could not save your setup. Please try again.'},{status:500}); }
+async function ensureSchema(db) {
+  if (schemaReady) return schemaReady;
+  schemaReady=(async()=>{
+    await db.exec(`CREATE TABLE IF NOT EXISTS onboarding_records (onboarding_id TEXT PRIMARY KEY,status TEXT NOT NULL,name TEXT NOT NULL,business_name TEXT NOT NULL,email TEXT NOT NULL,phone TEXT NOT NULL,service_area TEXT NOT NULL,service_radius_km INTEGER NOT NULL,primary_category TEXT NOT NULL,additional_categories TEXT NOT NULL DEFAULT '[]',preferred_services TEXT NOT NULL,work_type TEXT NOT NULL,exclusions TEXT NOT NULL,sms_addon INTEGER NOT NULL,unlimited_categories_addon INTEGER NOT NULL DEFAULT 0,monthly_total_aud INTEGER NOT NULL,stripe_payment_link TEXT NOT NULL,checkout_url TEXT NOT NULL DEFAULT '',source TEXT NOT NULL,privacy_acknowledged_at TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL,paid_at TEXT,stripe_checkout_session_id TEXT UNIQUE,stripe_customer_id TEXT,stripe_subscription_id TEXT,stripe_payment_status TEXT,last_stripe_event_id TEXT,idempotency_key TEXT UNIQUE)`);
+    for (const sql of [
+      'ALTER TABLE onboarding_records ADD COLUMN idempotency_key TEXT', 'ALTER TABLE onboarding_records ADD COLUMN checkout_url TEXT NOT NULL DEFAULT \'\'',
+      'ALTER TABLE onboarding_records ADD COLUMN updated_at TEXT', 'ALTER TABLE onboarding_records ADD COLUMN privacy_acknowledged_at TEXT',
+      'ALTER TABLE onboarding_records ADD COLUMN unlimited_categories_addon INTEGER NOT NULL DEFAULT 0', 'ALTER TABLE onboarding_records ADD COLUMN stripe_payment_status TEXT',
+      'ALTER TABLE onboarding_records ADD COLUMN last_stripe_event_id TEXT'
+    ]) { try { await db.exec(sql); } catch (_) {} }
+    try { await db.exec('CREATE UNIQUE INDEX IF NOT EXISTS onboarding_idempotency_idx ON onboarding_records(idempotency_key)'); } catch (_) {}
+  })();
+  return schemaReady;
+}
+function validUuid(v){return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v||'');}
+function checkoutUrl(link,id,email){const url=new URL(link);url.searchParams.set('client_reference_id',id);url.searchParams.set('prefilled_email',email);return url.toString();}
+function validate(b){
+  const idempotency=clean(b.idempotency_key,64), name=clean(b.name,100), business=clean(b.business_name,150), email=clean(b.email,254).toLowerCase(), phone=clean(b.phone,30), area=clean(b.service_area,120), services=clean(b.preferred_services,600), exclusions=clean(b.exclusions,600), primary=clean(b.primary_category,80), work=clean(b.work_type,20), radius=Number(b.service_radius_km);
+  if(!validUuid(idempotency)) return fail('idempotency_key','Please refresh the page and try again.'); if(name.length<2)return fail('name','Enter your name.'); if(business.length<2)return fail('business_name','Enter your business name.'); if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return fail('email','Enter a valid email address.'); if(phone.length<6||!/^[+()\d\s-]+$/.test(phone))return fail('phone','Enter a valid phone number.'); if(area.length<2)return fail('service_area','Enter your service area.'); if(![20,30,40,60,100].includes(radius))return fail('service_radius_km','Choose a valid service radius.'); if(!CATEGORIES.includes(primary))return fail('primary_category','Choose an approved service category.'); if(!['residential','commercial','both'].includes(work))return fail('work_type','Choose a valid work type.');
+  const extra=Array.isArray(b.additional_categories)?b.additional_categories.map(x=>clean(x,80)).filter(Boolean):null; if(!extra||extra.some(x=>!CATEGORIES.includes(x)||x===primary)||new Set(extra).size!==extra.length)return fail('additional_categories','Choose valid additional categories.');
+  if(typeof b.sms_addon!=='boolean'||typeof b.unlimited_categories_addon!=='boolean')return fail('addons','Please check your add-ons.'); if(!b.unlimited_categories_addon&&extra.length>2)return fail('additional_categories','Your plan includes up to three service categories.'); if(!services)return fail('preferred_services','Describe the services you want to receive.'); if(b.privacy_acknowledged!==true)return fail('privacy_acknowledged','Please agree to the Terms and Privacy Policy.');
+  const [link,total]=LINKS[`${b.sms_addon?1:0}${b.unlimited_categories_addon?1:0}`]; return {idempotency,name,business,email,phone,area,services,exclusions,primary,work,radius,extra,sms:b.sms_addon,unlimited:b.unlimited_categories_addon,link,total};
+}
+export async function onRequestPost({request,env}){
+  if((request.headers.get('Content-Type')||'').split(';')[0]!=='application/json')return json({success:false,message:'Please try again.'},415); const origin=request.headers.get('Origin'); if(origin&&origin!=='https://leaddrop.com.au')return new Response('Forbidden',{status:403}); const length=Number(request.headers.get('Content-Length')||0); if(length>16000)return json({success:false,message:'Please check your setup and try again.'},400);
+  let body;try{body=await request.json()}catch{return json({success:false,message:'Please check your setup and try again.'},400)} const data=validate(body);if(data instanceof Response)return data; if(!env.ONBOARDING_DB)return json({success:false,message:'We could not save your setup. Please try again.'},500);
+  try { await ensureSchema(env.ONBOARDING_DB); const old=await env.ONBOARDING_DB.prepare('SELECT onboarding_id,checkout_url,monthly_total_aud FROM onboarding_records WHERE idempotency_key=?').bind(data.idempotency).first(); if(old)return json({success:true,onboarding_id:old.onboarding_id,checkout_url:old.checkout_url,monthly_total_aud:old.monthly_total_aud},200);
+    const id=`ld_${crypto.randomUUID().replaceAll('-','')}`, now=new Date().toISOString(), checkout=checkoutUrl(data.link,id,data.email); await env.ONBOARDING_DB.prepare('INSERT INTO onboarding_records (onboarding_id,idempotency_key,status,name,business_name,email,phone,service_area,service_radius_km,primary_category,additional_categories,preferred_services,work_type,exclusions,sms_addon,unlimited_categories_addon,monthly_total_aud,stripe_payment_link,checkout_url,source,privacy_acknowledged_at,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id,data.idempotency,'pending_payment',data.name,data.business,data.email,data.phone,data.area,data.radius,data.primary,JSON.stringify(data.extra),data.services,data.work,data.exclusions,data.sms?1:0,data.unlimited?1:0,data.total,data.link,checkout,'leaddrop.com.au',now,now,now).run(); return json({success:true,onboarding_id:id,checkout_url:checkout,monthly_total_aud:data.total},201);
+  }catch(_){return json({success:false,message:'We could not save your setup. Please try again.'},500)}
 }

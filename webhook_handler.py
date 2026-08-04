@@ -10,6 +10,8 @@ Run as a Netlify Function or standalone Flask server.
 """
 import json
 import os
+import hmac
+import hashlib
 import subprocess
 import sys
 from pathlib import Path
@@ -21,6 +23,16 @@ LEADDROP_DIR = Path(__file__).parent
 EMAIL_ENGINE = LEADDROP_DIR / "email_engine.py"
 SUBSCRIBERS_FILE = Path(os.path.expanduser("~/kramer-data/state/leaddrop-subscribers.json"))
 ADMIN_EMAIL = "josh@jmstechsupport.com.au"
+
+def verify_stripe_signature(payload: bytes, signature_header: str, secret: str, tolerance: int = 300) -> bool:
+    """Verify Stripe's v1 signature without logging payloads or secrets."""
+    try:
+        values = dict(part.split("=", 1) for part in signature_header.split(",") if "=" in part)
+        timestamp = int(values["t"])
+        expected = hmac.new(secret.encode(), f"{timestamp}.".encode() + payload, hashlib.sha256).hexdigest()
+        return abs(datetime.now(timezone.utc).timestamp() - timestamp) <= tolerance and hmac.compare_digest(expected, values.get("v1", ""))
+    except (KeyError, ValueError):
+        return False
 
 # ── Stripe event handler ─────────────────────────────────────
 def handle_checkout_completed(event: dict) -> dict:
@@ -99,7 +111,13 @@ def save_subscriber(sub: dict):
 if __name__ == "__main__":
     # Accept JSON from stdin (for webhook piping)
     if not sys.stdin.isatty():
-        payload = json.load(sys.stdin)
+        raw = sys.stdin.buffer.read()
+        secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+        signature = os.environ.get("STRIPE_SIGNATURE_HEADER", "")
+        if not secret or not verify_stripe_signature(raw, signature, secret):
+            print(json.dumps({"status": "invalid_signature"}))
+            raise SystemExit(1)
+        payload = json.loads(raw)
         event_type = payload.get("type", "")
         if event_type == "checkout.session.completed":
             result = handle_checkout_completed(payload)
