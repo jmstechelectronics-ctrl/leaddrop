@@ -15,6 +15,8 @@ import sys
 from pathlib import Path
 from datetime import datetime, timezone
 
+from onboarding_store import reconcile_checkout_session
+
 LEADDROP_DIR = Path(__file__).parent
 EMAIL_ENGINE = LEADDROP_DIR / "email_engine.py"
 SUBSCRIBERS_FILE = Path(os.path.expanduser("~/kramer-data/state/leaddrop-subscribers.json"))
@@ -36,9 +38,11 @@ def handle_checkout_completed(event: dict) -> dict:
     categories = metadata.get("categories", "")
     category_count = len(categories.split(",")) if categories else 0
 
-    print(f"New subscriber: {customer_name} ({customer_email})")
-    print(f"  Plan: ${amount_total}/mo | Categories: {categories}")
-    print(f"  Business: {business_name} | Phone: {phone}")
+    reconciliation = reconcile_checkout_session(session)
+    if reconciliation["result"] in {"unmatched", "conflict"}:
+        print(f"LeadDrop onboarding reconciliation requires review: {reconciliation['result']} ({reconciliation.get('onboarding_id') or 'no reference'})")
+    else:
+        print(f"LeadDrop onboarding reconciled: {reconciliation['result']} ({reconciliation['onboarding_id']})")
 
     # Save subscriber
     save_subscriber({
@@ -73,7 +77,7 @@ def handle_checkout_completed(event: dict) -> dict:
         "--amount", str(int(amount_total)),
     ], check=False)
 
-    return {"status": "ok", "email": customer_email}
+    return {"status": "ok", "onboarding": reconciliation["result"]}
 
 # ── Subscriber DB ────────────────────────────────────────────
 def load_subscribers() -> list[dict]:
@@ -83,6 +87,9 @@ def load_subscribers() -> list[dict]:
 
 def save_subscriber(sub: dict):
     subs = load_subscribers()
+    session_id = sub.get("stripe_session_id", "")
+    if session_id and any(existing.get("stripe_session_id") == session_id for existing in subs):
+        return
     subs.append(sub)
     SUBSCRIBERS_FILE.parent.mkdir(parents=True, exist_ok=True)
     SUBSCRIBERS_FILE.write_text(json.dumps(subs, indent=2) + "\n")
