@@ -1,0 +1,8 @@
+name = "leaddrop"
+pages_build_output_dir = "."
+compatibility_date = "2025-08-05"
+
+[[d1_databases]]
+binding = "ONBOARDING_DB"
+database_name = "leaddrop-onboarding"
+database_id = "0b10a174-f91e-40b1-a6e2-f3614e26f2a9"
