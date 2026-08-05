@@ -1,5 +1,5 @@
 const CATEGORIES = ['Plumbing & Gas','Electrical','Building','Carpentry','Handyman','Roofing','Cleaning','Landscaping','Painting','Tiling','Concreting','Plastering','Earthmoving','Gardening','Pest Control','HVAC & Solar','Automotive','Locksmiths','Fencing','Welding','Glazing','Cabinetmaking','Flooring','Waterproofing','Tech Support','Rubbish Removal','Other service'];
-const LINKS = {'00':['https://buy.stripe.com/bJe6oJcxZ508gC47veg7e09',31],'10':['https://buy.stripe.com/eVqaEZ2Xp0JS3Pi7veg7e0a',41],'01':['https://buy.stripe.com/3cIdRb55x2S01Ha5n6g7e0b',41],'11':['https://buy.stripe.com/aFa00lapRfEMbhKbLug7e0c',51]};
+const LINKS = {'00':['https://buy.stripe.com/14A4gsehm7x9goAg6na3u08',31],'10':['https://buy.stripe.com/00waEQ0qweZBdcog6na3u09',41],'01':['https://buy.stripe.com/7sY6oAddi18Lb4g5rJa3u0a',41],'11':['https://buy.stripe.com/28E00cc9e8Bdb4gaM3a3u0b',51]};
 const clean=(v,max)=>typeof v==='string'?v.trim().replace(/\s+/g,' ').slice(0,max):'';
 const json=(body,status)=>Response.json(body,{status,headers:{'Cache-Control':'no-store'}});
 const fail=(field,message)=>json({success:false,field_errors:{[field]:message}},400);

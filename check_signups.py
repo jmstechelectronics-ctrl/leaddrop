@@ -17,7 +17,7 @@ STRIPE_KEY_FILE = Path.home() / ".config/leaddrop/stripe-live-key.txt"
 SUBSCRIBERS_FILE = Path.home() / "kramer-data/state/leaddrop-subscribers.json"
 EMAIL_ENGINE = Path.home() / "projects/leaddrop/email_engine.py"
 ADMIN_EMAIL = "josh@jmstechsupport.com.au"
-LEADDROP_PRICE_PREFIX = "price_1Tlea"  # All 4 LeadDrop price IDs start with this
+LEADDROP_PRICE_PREFIX = "price_1U0sL"  # All 4 LeadDrop price IDs start with this
 
 def stripe(method, path, data=None):
     api_key = STRIPE_KEY_FILE.read_text().strip()

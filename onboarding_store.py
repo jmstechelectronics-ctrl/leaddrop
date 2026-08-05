@@ -12,10 +12,10 @@ STATE_DIR = Path(os.environ.get("LEADDROP_DATA_DIR", Path.home() / "kramer-data"
 DB_PATH = Path(os.environ.get("LEADDROP_ONBOARDING_DB", STATE_DIR / "leaddrop-onboarding.sqlite3"))
 
 STRIPE_LINKS = {
-    (False, False): "https://buy.stripe.com/bJe6oJcxZ508gC47veg7e09",
-    (True, False): "https://buy.stripe.com/eVqaEZ2Xp0JS3Pi7veg7e0a",
-    (False, True): "https://buy.stripe.com/3cIdRb55x2S01Ha5n6g7e0b",
-    (True, True): "https://buy.stripe.com/aFa00lapRfEMbhKbLug7e0c",
+    (False, False): "https://buy.stripe.com/14A4gsehm7x9goAg6na3u08",
+    (True, False): "https://buy.stripe.com/00waEQ0qweZBdcog6na3u09",
+    (False, True): "https://buy.stripe.com/7sY6oAddi18Lb4g5rJa3u0a",
+    (True, True): "https://buy.stripe.com/28E00cc9e8Bdb4gaM3a3u0b",
 }
 
 
