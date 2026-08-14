@@ -36,10 +36,12 @@
         var error=document.getElementById('free-report-error');
         if(!name||!business||!email||!trade||!area||!email.includes('@')){error.textContent='Please complete every field with a valid email address.';return;}
         error.textContent='';
-        var subject=encodeURIComponent('Free weekly LeadDrop report request');
-        var body=encodeURIComponent('Please add me to the free weekly LeadDrop report.\n\nName: '+name+'\nBusiness: '+business+'\nEmail: '+email+'\nTrade: '+trade+'\nService area: '+area);
-        window.location.href='mailto:info@leaddrop.com.au?subject='+subject+'&body='+body;
-        document.getElementById('free-report-status').textContent='Your email app should now be open with the request prepared. Send it to complete this beta test.';
+        var status=document.getElementById('free-report-status');
+        status.textContent='Sending your request…';
+        fetch('/api/free-report-signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,business:business,email:email,trade:trade,area:area,website:''})})
+          .then(function(response){return response.json().then(function(data){return {ok:response.ok,data:data};});})
+          .then(function(result){if(!result.ok||!result.data.success)throw new Error(result.data.message||'Could not save request.');form.reset();status.textContent=result.data.message;})
+          .catch(function(err){status.textContent=err.message||'We could not save your request. Please try again.';});
       });
     }());
     (function () {
