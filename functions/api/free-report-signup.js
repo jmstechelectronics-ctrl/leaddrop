@@ -9,11 +9,12 @@ async function sha256(value) {
 }
 
 async function ensureSchema(db) {
-  await db.exec(`CREATE TABLE IF NOT EXISTS free_report_signups (id TEXT PRIMARY KEY, name TEXT NOT NULL, business_name TEXT NOT NULL, email TEXT NOT NULL, trade TEXT NOT NULL, service_area TEXT NOT NULL, status TEXT NOT NULL, source TEXT NOT NULL, created_at TEXT NOT NULL, token_hash TEXT, token_expires_at TEXT, confirmed_at TEXT)`);
+  await db.exec(`CREATE TABLE IF NOT EXISTS free_report_signups (id TEXT PRIMARY KEY, name TEXT NOT NULL, business_name TEXT NOT NULL, email TEXT NOT NULL, trade TEXT NOT NULL, service_area TEXT NOT NULL, status TEXT NOT NULL, source TEXT NOT NULL, created_at TEXT NOT NULL, consent_at TEXT, token_hash TEXT, token_expires_at TEXT, confirmed_at TEXT)`);
   for (const sql of [
     'ALTER TABLE free_report_signups ADD COLUMN token_hash TEXT',
     'ALTER TABLE free_report_signups ADD COLUMN token_expires_at TEXT',
-    'ALTER TABLE free_report_signups ADD COLUMN confirmed_at TEXT'
+    'ALTER TABLE free_report_signups ADD COLUMN confirmed_at TEXT',
+    'ALTER TABLE free_report_signups ADD COLUMN consent_at TEXT'
   ]) { try { await db.exec(sql); } catch (_) {} }
 }
 
@@ -27,6 +28,7 @@ export async function onRequestPost({ request, env }) {
 
   const name = clean(body.name, 100), business = clean(body.business, 150), email = clean(body.email, 254).toLowerCase(), trade = clean(body.trade, 80), area = clean(body.area, 120);
   if (name.length < 2 || business.length < 2 || trade.length < 2 || area.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ success: false, message: 'Please complete every field with a valid email address.' }, 400);
+  if (body.consent !== true) return json({ success: false, message: 'Please confirm you want to receive the free weekly report.' }, 400);
   if (!env.ONBOARDING_DB || !env.RESEND_API_KEY) return json({ success: false, message: 'The beta email service is not configured yet.' }, 503);
 
   const id = `fr_${crypto.randomUUID().replaceAll('-', '')}`;
@@ -37,7 +39,7 @@ export async function onRequestPost({ request, env }) {
   const confirmUrl = `${env.PUBLIC_SITE_URL || 'https://leaddrop.com.au'}/api/confirm?token=${encodeURIComponent(token)}`;
   try {
     await ensureSchema(env.ONBOARDING_DB);
-    await env.ONBOARDING_DB.prepare('INSERT INTO free_report_signups (id,name,business_name,email,trade,service_area,status,source,created_at,token_hash,token_expires_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)').bind(id, name, business, email, trade, area, 'pending_confirmation', 'beta-free-report', now.toISOString(), tokenHash, expires.toISOString()).run();
+    await env.ONBOARDING_DB.prepare('INSERT INTO free_report_signups (id,name,business_name,email,trade,service_area,status,source,created_at,consent_at,token_hash,token_expires_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)').bind(id, name, business, email, trade, area, 'pending_confirmation', 'beta-free-report', now.toISOString(), now.toISOString(), tokenHash, expires.toISOString()).run();
 
     const emailResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',
