@@ -74,7 +74,9 @@
     .review-media { border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--surface); }
     .review-media img { display:block; width:100%; height:auto; }
     .review-media img { aspect-ratio:4 / 3; object-fit:cover; object-position:center; }
-    .profile-layout { align-items:start; }
+    .profile-layout { align-items:stretch; }
+    .profile-layout > div:first-child { display:flex; flex-direction:column; min-height:100%; }
+    .profile-points { flex:1; }
     .profile-card { padding:15px; border-radius:10px; }
     .profile-card h3 { margin:4px 0 12px; }
     .profile-summary { color:var(--muted); font-size:.91rem; margin:0 0 14px; }
