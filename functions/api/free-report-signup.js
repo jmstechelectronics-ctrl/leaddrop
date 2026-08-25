@@ -9,12 +9,14 @@ async function sha256(value) {
 }
 
 async function ensureSchema(db) {
-  await db.exec(`CREATE TABLE IF NOT EXISTS free_report_signups (id TEXT PRIMARY KEY, name TEXT NOT NULL, business_name TEXT NOT NULL, email TEXT NOT NULL, trade TEXT NOT NULL, service_area TEXT NOT NULL, status TEXT NOT NULL, source TEXT NOT NULL, created_at TEXT NOT NULL, consent_at TEXT, token_hash TEXT, token_expires_at TEXT, confirmed_at TEXT)`);
+  await db.exec(`CREATE TABLE IF NOT EXISTS free_report_signups (id TEXT PRIMARY KEY, name TEXT NOT NULL, business_name TEXT NOT NULL, email TEXT NOT NULL, trade TEXT NOT NULL, service_area TEXT NOT NULL, status TEXT NOT NULL, source TEXT NOT NULL, created_at TEXT NOT NULL, consent_at TEXT, token_hash TEXT, token_expires_at TEXT, unsubscribe_token_hash TEXT, confirmed_at TEXT, unsubscribed_at TEXT)`);
   for (const sql of [
     'ALTER TABLE free_report_signups ADD COLUMN token_hash TEXT',
     'ALTER TABLE free_report_signups ADD COLUMN token_expires_at TEXT',
     'ALTER TABLE free_report_signups ADD COLUMN confirmed_at TEXT',
-    'ALTER TABLE free_report_signups ADD COLUMN consent_at TEXT'
+    'ALTER TABLE free_report_signups ADD COLUMN consent_at TEXT',
+    'ALTER TABLE free_report_signups ADD COLUMN unsubscribe_token_hash TEXT',
+    'ALTER TABLE free_report_signups ADD COLUMN unsubscribed_at TEXT'
   ]) { try { await db.exec(sql); } catch (_) {} }
 }
 
@@ -34,12 +36,15 @@ export async function onRequestPost({ request, env }) {
   const id = `fr_${crypto.randomUUID().replaceAll('-', '')}`;
   const token = crypto.randomUUID() + crypto.randomUUID();
   const tokenHash = await sha256(token);
+  const unsubscribeToken = crypto.randomUUID() + crypto.randomUUID();
+  const unsubscribeTokenHash = await sha256(unsubscribeToken);
   const now = new Date();
   const expires = new Date(now.getTime() + 24 * 60 * 60 * 1000);
   const confirmUrl = `${env.PUBLIC_SITE_URL || 'https://leaddrop.com.au'}/api/confirm?token=${encodeURIComponent(token)}`;
+  const unsubscribeUrl = `${env.PUBLIC_SITE_URL || 'https://leaddrop.com.au'}/api/unsubscribe?token=${encodeURIComponent(unsubscribeToken)}`;
   try {
     await ensureSchema(env.ONBOARDING_DB);
-    await env.ONBOARDING_DB.prepare('INSERT INTO free_report_signups (id,name,business_name,email,trade,service_area,status,source,created_at,consent_at,token_hash,token_expires_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)').bind(id, name, business, email, trade, area, 'pending_confirmation', 'beta-free-report', now.toISOString(), now.toISOString(), tokenHash, expires.toISOString()).run();
+    await env.ONBOARDING_DB.prepare('INSERT INTO free_report_signups (id,name,business_name,email,trade,service_area,status,source,created_at,consent_at,token_hash,token_expires_at,unsubscribe_token_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id, name, business, email, trade, area, 'pending_confirmation', 'beta-free-report', now.toISOString(), now.toISOString(), tokenHash, expires.toISOString(), unsubscribeTokenHash).run();
 
     const emailResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -48,7 +53,7 @@ export async function onRequestPost({ request, env }) {
         from: env.RESEND_FROM || 'LeadDrop <reports@leaddrop.com.au>',
         to: [email],
         subject: 'Confirm your free LeadDrop weekly report',
-        html: `<p>Hi ${escapeHtml(name)},</p><p>Click below to confirm your free LeadDrop weekly report:</p><p><a href="${confirmUrl}">Confirm my free report</a></p><p>This link expires in 24 hours. If you did not request this, you can ignore this email.</p>`
+        html: `<p>Hi ${escapeHtml(name)},</p><p>Click below to confirm your free LeadDrop weekly report:</p><p><a href="${confirmUrl}">Confirm my free report</a></p><p>This link expires in 24 hours. If you did not request this, you can ignore this email.</p><p><a href="${unsubscribeUrl}">Unsubscribe from the free weekly report</a></p>`
       })
     });
     if (!emailResponse.ok) {
