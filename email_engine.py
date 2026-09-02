@@ -67,6 +67,33 @@ def render(template_name: str, **kwargs) -> tuple[str, str]:
     html = layout.replace("{subject}", subject).replace("{body}", body)
     return subject, html
 
+
+def read_cards(path_value: str, *, label: str, require_direct_links: bool) -> str:
+    """Read manually curated report cards and validate direct links where required."""
+    if not path_value:
+        return ""
+    path = Path(path_value)
+    if not path.is_file():
+        raise ValueError(f"{label} file was not found: {path}")
+    cards = path.read_text().strip()
+    if not cards:
+        return ""
+    facebook_links = re.findall(r'''href=["'](https?://[^"']*facebook\.com[^"']*)["']''', cards, flags=re.IGNORECASE)
+    if require_direct_links and (not facebook_links or any(not DIRECT_FACEBOOK_POST_URL.fullmatch(link) for link in facebook_links)):
+        raise ValueError(f"{label} cards must use exact Facebook post permalinks; group-search links are not allowed")
+    return cards
+
+
+def report_section(title: str, cards: str) -> str:
+    if not cards:
+        return ""
+    return (
+        '<section style="margin:0 0 28px;">'
+        f'<h2 style="color:#f0f0ec;font-size:20px;margin:0 0 14px;">{title}</h2>'
+        f'{cards}'
+        '</section>'
+    )
+
 # ── SMTP sender ──────────────────────────────────────────────
 def send(to_email: str, subject: str, html: str) -> bool:
     """Send HTML email via VentraIP SMTP."""
@@ -95,7 +122,7 @@ def send(to_email: str, subject: str, html: str) -> bool:
 # ── CLI ──────────────────────────────────────────────────────
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="LeadDrop Email Engine")
-    parser.add_argument("template", choices=["welcome", "lead", "admin-signup", "telegram-setup", "weekly-report", "weekly-report-missed-leads"])
+    parser.add_argument("template", choices=["welcome", "lead", "admin-signup", "telegram-setup", "weekly-report"])
     parser.add_argument("--email", required=True, help="Recipient email")
     parser.add_argument("--name", default="", help="Customer name")
     parser.add_argument("--business", default="", help="Business name")
@@ -111,7 +138,9 @@ if __name__ == "__main__":
     parser.add_argument("--category-count", default="0", help="Number of categories")
     parser.add_argument("--subscriber-id", default="", help="Subscriber identifier for Telegram linking")
     parser.add_argument("--report-date", default="", help="Date displayed on a weekly report")
-    parser.add_argument("--lead-cards-file", default="", help="HTML file containing weekly lead cards with exact Facebook post links")
+    parser.add_argument("--fresh-permalink-cards-file", default="", help="HTML cards for new leads with exact Facebook post links")
+    parser.add_argument("--fresh-other-cards-file", default="", help="HTML cards for new leads without a direct permalink")
+    parser.add_argument("--missed-lead-cards-file", default="", help="HTML cards for older local leads worth revisiting")
     parser.add_argument("--dry-run", action="store_true", help="Print HTML, don't send")
 
     args = parser.parse_args()
@@ -120,15 +149,23 @@ if __name__ == "__main__":
     dry_run = kwargs.pop("dry_run")
     del kwargs["email"]  # handled separately
 
-    if template_name in {"weekly-report", "weekly-report-missed-leads"}:
-        cards_file = Path(kwargs.pop("lead_cards_file", ""))
-        if not cards_file.is_file():
-            parser.error("weekly report requires --lead-cards-file containing exact Facebook post links")
-        cards = cards_file.read_text()
-        facebook_links = re.findall(r'''href=["'](https?://[^"']*facebook\.com[^"']*)["']''', cards, flags=re.IGNORECASE)
-        if not facebook_links or any(not DIRECT_FACEBOOK_POST_URL.fullmatch(link) for link in facebook_links):
-            parser.error("weekly report lead cards must use exact Facebook post permalinks; group-search links are not allowed")
-        kwargs["lead_cards"] = cards
+    if template_name == "weekly-report":
+        try:
+            fresh_permalink = read_cards(kwargs.pop("fresh_permalink_cards_file", ""), label="Fresh permalink", require_direct_links=True)
+            fresh_other = read_cards(kwargs.pop("fresh_other_cards_file", ""), label="Fresh other", require_direct_links=False)
+            missed = read_cards(kwargs.pop("missed_lead_cards_file", ""), label="Missed lead", require_direct_links=True)
+        except ValueError as exc:
+            parser.error(str(exc))
+        if not (fresh_permalink or fresh_other or missed):
+            parser.error("weekly-report requires at least one fresh or missed lead card")
+        sections: list[str] = []
+        if fresh_permalink:
+            sections.append(report_section("New local leads", fresh_permalink))
+        if fresh_other:
+            sections.append(report_section("More local leads", fresh_other))
+        if missed:
+            sections.append(report_section("Leads you may have missed!", missed))
+        kwargs["report_sections"] = "".join(sections)
     
     subject, html = render(template_name, email=args.email, **kwargs)
     

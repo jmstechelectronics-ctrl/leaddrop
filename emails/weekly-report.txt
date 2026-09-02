@@ -1,14 +1,10 @@
 {subject}
-Your local lead report — {report_date}
+Your weekly local lead report — {report_date}
 {/subject}
 
 {body}
 <p style="color:#c7c7c2;font-size:16px;line-height:1.6;margin:0 0 24px;">Hi there,</p>
 <p style="color:#c7c7c2;font-size:16px;line-height:1.6;margin:0 0 28px;">Here are the verified local service requests we found in your area. Each lead opens the exact original Facebook post.</p>
 
-{lead_cards}
-
-<div style="border-top:1px solid #303236;margin:32px 0 0;padding:28px 0 0;text-align:center;">
-  <h2 style="color:#f0f0ec;font-size:20px;margin:0;">Leads you may have missed!</h2>
-</div>
+{report_sections}
 {/body}
