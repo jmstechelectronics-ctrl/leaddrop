@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your weekly LeadDrop report</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f3ef;font-family:Arial,Helvetica,sans-serif;color:#1b1c1e;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">Public local conversations matched to your LeadDrop profile.</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%;background:#f4f3ef;padding:24px 12px;">
+    <tr><td align="center">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%;max-width:640px;background:#ffffff;border:1px solid #e6e3da;border-radius:14px;overflow:hidden;">
+        <tr><td style="padding:28px 32px;background:#0b0c0e;color:#ffffff;">
+          <p style="margin:0 0 8px;font-size:13px;font-weight:700;letter-spacing:1.4px;color:#facc15;text-transform:uppercase;">LeadDrop weekly report</p>
+          <h1 style="margin:0;font-size:30px;line-height:1.1;font-weight:700;">Local opportunities, ready to review.</h1>
+        </td></tr>
+        <tr><td style="padding:32px;">
+          <p style="margin:0 0 12px;font-size:16px;line-height:1.55;">Hi {{recipient_name}},</p>
+          <p style="margin:0 0 24px;font-size:16px;line-height:1.55;color:#4a4b4e;">Here are this week’s public conversations matched to <strong>{{trade}}</strong> work around <strong>{{service_area}}</strong>. Review the original post before replying—availability and details can change.</p>
+
+          <!-- Repeat this card for every matched lead. -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%;margin:0 0 18px;border:1px solid #dedbd2;border-radius:10px;overflow:hidden;">
+            <tr><td style="padding:18px 20px 8px;background:#fbfaf7;">
+              <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:1px;color:#897331;text-transform:uppercase;">{{lead_location}} · {{lead_source}}</p>
+              <h2 style="margin:0;font-size:21px;line-height:1.25;color:#17181a;">{{lead_title}}</h2>
+            </td></tr>
+            <tr><td style="padding:14px 20px 20px;">
+              <p style="margin:0 0 14px;font-size:15px;line-height:1.55;color:#3f4043;">{{lead_summary}}</p>
+              <p style="margin:0 0 16px;font-size:13px;line-height:1.45;color:#6b6c70;"><strong>Why it matched:</strong> {{match_reason}}</p>
+              <a href="{{original_post_url}}" style="display:inline-block;padding:12px 17px;border-radius:7px;background:#eab308;color:#17181a;font-size:14px;font-weight:700;text-decoration:none;">Open original post</a>
+            </td></tr>
+          </table>
+          <!-- End repeatable lead card. -->
+
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%;margin:26px 0 0;background:#f8f5e8;border:1px solid #eadfae;border-radius:10px;">
+            <tr><td style="padding:20px;">
+              <h2 style="margin:0 0 8px;font-size:19px;line-height:1.25;color:#24220f;">Want opportunities sooner?</h2>
+              <p style="margin:0 0 16px;font-size:15px;line-height:1.5;color:#57502b;">Upgrade for faster LeadDrop delivery and a profile refined around the work you want.</p>
+              <a href="{{upgrade_url}}" style="font-size:14px;font-weight:700;color:#5d4a00;text-decoration:underline;">See the upgrade option →</a>
+            </td></tr>
+          </table>
+        </td></tr>
+        <tr><td style="padding:22px 32px;background:#f7f6f2;border-top:1px solid #e6e3da;">
+          <p style="margin:0 0 8px;font-size:12px;line-height:1.5;color:#6b6c70;">You received this because you requested the free LeadDrop weekly report for {{recipient_email}}.</p>
+          <p style="margin:0;font-size:12px;line-height:1.5;color:#6b6c70;"><a href="{{unsubscribe_url}}" style="color:#4a4b4e;text-decoration:underline;">Unsubscribe</a> &nbsp;·&nbsp; <a href="https://leaddrop.com.au/privacy.html" style="color:#4a4b4e;text-decoration:underline;">Privacy</a> &nbsp;·&nbsp; <a href="mailto:info@leaddrop.com.au" style="color:#4a4b4e;text-decoration:underline;">Contact LeadDrop</a></p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

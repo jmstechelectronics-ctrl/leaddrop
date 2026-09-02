@@ -11,18 +11,51 @@
   <meta property="og:url" content="https://leaddrop.com.au/">
   <meta property="og:title" content="LeadDrop | Local Service Leads Matched to Your Business">
   <meta property="og:description" content="LeadDrop monitors local conversations for people looking for services like yours, configured around your service area and preferred work.">
-  <meta property="og:image" content="https://leaddrop.com.au/assets/leaddrop-brisbane-electrician-hero.webp">
+  <meta property="og:image" content="https://leaddrop.com.au/beta/assets/ld_hero.webp">
   <meta property="og:image:alt" content="LeadDrop electrician lead alert for Carindale, Brisbane">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="LeadDrop | Local Service Leads Matched to Your Business">
   <meta name="twitter:description" content="Local service leads matched to your service area, preferred work and Custom Lead Profile.">
-  <meta name="twitter:image" content="https://leaddrop.com.au/assets/leaddrop-brisbane-electrician-hero.webp">
+  <meta name="twitter:image" content="https://leaddrop.com.au/beta/assets/ld_hero.webp">
   <meta name="theme-color" content="#0b0c0e">
+  <base href="/beta/">
   <link rel="icon" type="image/png" href="/favicon-32.png">
   <link rel="preload" as="image" href="assets/ld_hero.webp" type="image/webp" imagesrcset="assets/ld_hero-720.webp 720w, assets/ld_hero.webp 1360w" imagesizes="100vw">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"LeadDrop","url":"https://leaddrop.com.au/","logo":"https://leaddrop.com.au/logo-transparent.png"},{"@type":"Service","name":"LeadDrop Custom Lead Profile","provider":{"@type":"Organization","name":"LeadDrop"},"areaServed":{"@type":"Country","name":"Australia"},"description":"Lead monitoring configured around a customer's service area, travel radius, services, preferred jobs, exclusions and alert preferences."}]}</script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-76CX8HQWR7"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-76CX8HQWR7');</script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    (function () {
+      var form=document.getElementById('free-report-form');
+      if(!form)return;
+      form.addEventListener('submit',function(event){
+        event.preventDefault();
+        var name=document.getElementById('free-name').value.trim();
+        var business=document.getElementById('free-business').value.trim();
+        var email=document.getElementById('free-email').value.trim();
+        var trade=document.getElementById('free-trade').value;
+        var area=document.getElementById('free-area').value.trim();
+        var consent=document.getElementById('free-consent').checked;
+        var error=document.getElementById('free-report-error');
+        if(!name||!business||!email||!trade||!area||!email.includes('@')){error.textContent='Please complete every field with a valid email address.';return;}
+        if(!consent){error.textContent='Please confirm you want to receive the free weekly report.';return;}
+        error.textContent='';
+        var status=document.getElementById('free-report-status');
+        status.textContent='Saving your details…';
+        fetch('/api/free-report-signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,business:business,email:email,trade:trade,area:area,consent:consent,website:''})})
+          .then(function(response){return response.json().then(function(data){return {ok:response.ok,data:data};});})
+          .then(function(result){if(!result.ok||!result.data.success)throw new Error(result.data.message||'Could not save request.');form.reset();status.textContent=result.data.message;})
+          .catch(function(err){status.textContent=err.message||'We could not save your request. Please try again.';});
+      });
+    }());
+    (function () {
+      var toggle=document.querySelector('.mobile-menu-toggle');
+      var menu=document.getElementById('mobile-menu');
+      if(toggle&&menu){toggle.addEventListener('click',function(){var open=toggle.getAttribute('aria-expanded')==='true';toggle.setAttribute('aria-expanded',String(!open));menu.hidden=open;});}
+      document.querySelectorAll('details').forEach(function(d){d.addEventListener('toggle',function(){if(d.open)d.scrollIntoView({block:'nearest'});});});
+    }());
+    });
+  </script>
   <style>
     :root { --bg:#0b0c0e; --surface:#141518; --surface-2:#1a1b1e; --text:#f0f0ec; --muted:#aaa9a1; --dim:#77766f; --accent:#eab308; --accent-light:#facc15; --line:rgba(255,255,255,.1); --radius:14px; --font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
     * { box-sizing:border-box; } html { scroll-behavior:smooth; } body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 var(--font); } a { color:inherit; } button,input,select,textarea { font:inherit; } button { cursor:pointer; }
@@ -44,7 +77,9 @@
     .review-media { border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--surface); }
     .review-media img { display:block; width:100%; height:auto; }
     .review-media img { aspect-ratio:4 / 3; object-fit:cover; object-position:center; }
-    .profile-layout { align-items:start; }
+    .profile-layout { align-items:stretch; }
+    .profile-layout > div:first-child { display:flex; flex-direction:column; min-height:100%; }
+    .profile-points { flex:1; }
     .profile-card { padding:15px; border-radius:10px; }
     .profile-card h3 { margin:4px 0 12px; }
     .profile-summary { color:var(--muted); font-size:.91rem; margin:0 0 14px; }
@@ -57,157 +92,32 @@
   </style>
 </head>
 <body>
-  <nav aria-label="Primary navigation"><div class="container nav-inner"><a class="logo" href="#top"><img src="/logo-nav.svg" alt="LeadDrop"></a><a class="btn btn-small nav-cta" href="#profile-builder">Build my Custom Lead Profile</a><button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open navigation menu"><span></span><span></span><span></span></button></div><div class="mobile-menu" id="mobile-menu" hidden><a href="#how-it-works">How it works</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a class="mobile-menu-cta" href="#profile-builder">Build my Custom Lead Profile</a></div></nav>
+  <nav aria-label="Primary navigation"><div class="container nav-inner"><a class="logo" href="#top"><img src="/logo-nav.svg" alt="LeadDrop"></a><a class="btn btn-small nav-cta" href="#free-report">Get the free weekly report</a><button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open navigation menu"><span></span><span></span><span></span></button></div><div class="mobile-menu" id="mobile-menu" hidden><a href="#how-it-works">How it works</a><a href="#free-report">Free report</a><a href="#faq">FAQ</a><a class="mobile-menu-cta" href="#free-report">Get the free weekly report</a></div></nav>
   <main id="top">
-    <section class="hero"><div class="container hero-grid"><div class="hero-copy"><p class="eyebrow">Personalised lead monitoring</p><h1>Stop searching for work. Let LeadDrop find it.</h1><p class="lead">LeadDrop monitors local conversations for people looking for services like yours. Every account is personally configured around your area, services and preferred jobs.</p><div class="actions"><a class="btn" href="#profile-builder">Build my Custom Lead Profile</a><a class="btn btn-secondary" href="#sample-lead">See a sample lead</a></div><p class="reassurance">From $31 per month. No pay-per-lead fees. Cancel anytime.</p></div></div></section>
+    <section class="hero"><div class="container hero-grid"><div class="hero-copy"><p class="eyebrow">Personalised lead monitoring</p><h1>Stop searching for work. Let LeadDrop find it.</h1><p class="lead">LeadDrop monitors local conversations for people looking for services like yours. Every account is personally configured around your area, services and preferred jobs.</p><div class="actions"><a class="btn" href="#free-report">Get the free weekly report</a><a class="btn btn-secondary" href="#sample-lead">See a sample lead</a></div><p class="reassurance">No card. No obligation. Real local requests with original public links.</p></div></div></section>
 
-    <section id="custom-profile"><div class="container"><div class="section-head"><p class="eyebrow">Custom Lead Profile</p><h2>Built around your business—not just your industry</h2><p class="lead">LeadDrop learns where you work, the services you provide and the jobs worth sending. Your profile gives every match the context a generic lead feed misses.</p></div><div class="profile-layout"><div><div class="profile-points"><div class="point"><strong>Service area</strong><span>Your suburb or postcode</span></div><div class="point"><strong>Travel radius</strong><span>How far you want to go</span></div><div class="point"><strong>Services</strong><span>What you actually offer</span></div><div class="point"><strong>Preferred jobs</strong><span>The work you want more of</span></div><div class="point"><strong>Exclusions</strong><span>Jobs and places to avoid</span></div><div class="point"><strong>Alert methods</strong><span>Email, Telegram, and optional SMS</span></div></div><a class="btn" href="#profile-builder">Build my Custom Lead Profile</a></div><aside class="profile-card" aria-label="Example Custom Lead Profile"><p class="eyebrow">Example profile</p><h3>Brisbane electrician</h3><p class="profile-summary">We’ll create a Custom Lead Profile for electrical work within 30 km of Brisbane, focused on residential and small-business jobs including repairs, lighting and switchboard upgrades, while excluding solar installations.</p><ul class="profile-list"><li><span>Service area</span><strong>Brisbane QLD</strong></li><li><span>Travel radius</span><strong>30 km</strong></li><li><span>Preferred services</span><strong>Electrical repairs, lighting, switchboard upgrades</strong></li><li><span>Preferred work</span><strong>Homes + small business</strong></li><li><span>Exclude</span><strong>Solar installations</strong></li><li><span>Alerts</span><strong>Email + Telegram</strong></li></ul></aside></div></div></section>
+    <section id="custom-profile"><div class="container"><div class="section-head"><p class="eyebrow">Custom Lead Profile</p><h2>Built around your business—not just your industry</h2><p class="lead">LeadDrop learns where you work, the services you provide and the jobs worth sending. Your profile gives every match the context a generic lead feed misses.</p></div><div class="profile-layout"><div><div class="profile-points"><div class="point"><strong>Service area</strong><span>Your suburb or postcode</span></div><div class="point"><strong>Travel radius</strong><span>How far you want to go</span></div><div class="point"><strong>Services</strong><span>What you actually offer</span></div><div class="point"><strong>Preferred jobs</strong><span>The work you want more of</span></div><div class="point"><strong>Exclusions</strong><span>Jobs and places to avoid</span></div><div class="point"><strong>Alert methods</strong><span>Email, Telegram, and optional SMS</span></div></div><a class="btn" href="#free-report">Get the free weekly report</a></div><aside class="profile-card" aria-label="Example Custom Lead Profile"><p class="eyebrow">Example profile</p><h3>Brisbane electrician</h3><p class="profile-summary">We’ll create a Custom Lead Profile for electrical work within 30 km of Brisbane, focused on residential and small-business jobs including repairs, lighting and switchboard upgrades, while excluding solar installations.</p><ul class="profile-list"><li><span>Service area</span><strong>Brisbane QLD</strong></li><li><span>Travel radius</span><strong>30 km</strong></li><li><span>Preferred services</span><strong>Electrical repairs, lighting, switchboard upgrades</strong></li><li><span>Preferred work</span><strong>Homes + small business</strong></li><li><span>Exclude</span><strong>Solar installations</strong></li><li><span>Alerts</span><strong>Email + Telegram</strong></li></ul></aside></div></div></section>
 
     <section class="alt"><div class="container"><div class="section-head"><p class="eyebrow">How LeadDrop works</p><h2>A setup that gets more useful over time</h2></div><div class="steps"><article class="step"><h3>Tell us what you want.</h3><p>Share your location, services, preferred work and anything you do not want.</p></article><article class="step"><h3>We personally configure LeadDrop.</h3><p>Your Custom Lead Profile is checked and configured before activation.</p></article><article class="step"><h3>Matching opportunities are delivered.</h3><p>Receive matching conversations through your selected alert methods.</p></article><article class="step"><h3>Your profile is refined over time.</h3><p>We adjust the profile when matches are too broad, distant or unsuitable.</p></article></div></div></section>
 
     <section id="sample-lead"><div class="container"><div class="section-head"><p class="eyebrow">Example lead alert</p><h2>See the context before you open the conversation</h2><p class="lead">A demonstration of the type of alert your Custom Lead Profile can be configured to receive.</p></div><article class="alert-card"><div class="alert-top"><span class="tag">Example only</span><span>Demonstration content</span></div><div class="alert-body"><strong>Electrician needed near Southport</strong><blockquote>“Looking for a licensed electrician to install two additional power points and inspect a safety switch that keeps tripping.”</blockquote><p>Why it matched this example profile:</p><div class="match-list"><span>Within the selected 30 km service area</span><span>Electrical repairs and power-point work are included</span><span>Residential jobs are preferred</span></div><p class="example-note" style="text-align:left">Matching alerts include a link to the original conversation where the source permits it.</p></div></article><p class="example-note">Demonstration data only. This is not a current lead or an indication of live lead availability.</p></div></section>
 
-    <section class="alt" id="profile-builder"><div class="container"><div class="section-head"><p class="eyebrow">Profile builder</p><h2>Start shaping your Custom Lead Profile</h2><p class="lead">Tell us what you want your Custom Lead Profile to include. Monitoring does not begin until your details are reviewed and activated.</p></div><div class="form-card"><form id="profile-form" novalidate><div class="form-grid"><label><span>Suburb or postcode</span><input id="area" name="area" autocomplete="postal-code" placeholder="e.g. Brisbane or 4000" required></label><label><span>Service radius</span><select id="radius" name="radius"><option value="20">20 km</option><option value="30">30 km</option><option value="40" selected>40 km</option><option value="60">60 km</option><option value="100">100 km</option></select></label><label><span>Primary category</span><select id="category" name="category" required><option value="">Choose a category</option><option>Plumbing &amp; Gas</option><option>Electrical</option><option>Building</option><option>Carpentry</option><option>Handyman</option><option>Cleaning</option><option>Landscaping</option><option>Painting</option><option>Tech Support</option><option>Other service</option></select></label><label><span>Preferred services</span><input id="services" name="services" placeholder="e.g. repairs, lighting, switchboard upgrades"></label><fieldset class="full" style="border:0;padding:0;margin:0"><legend style="font-weight:700;font-size:.9rem;margin-bottom:6px">Work type</legend><div class="choice-set"><label><input type="radio" name="work-type" value="residential" checked> Residential</label><label><input type="radio" name="work-type" value="commercial"> Commercial</label><label><input type="radio" name="work-type" value="both"> Both</label></div></fieldset><label class="full"><span>Unwanted job types</span><textarea id="exclusions" name="exclusions" placeholder="e.g. solar installations"></textarea></label></div><p id="profile-summary-copy" class="profile-summary-copy" aria-live="polite">Choose your location and category to see your Custom Lead Profile.</p><p id="profile-error" class="validation" role="alert"></p><div class="actions"><button class="btn" type="submit">Continue to signup</button><button class="btn btn-secondary" type="button" id="reset-profile">Clear profile</button></div><p class="form-foot">You can review and adjust these selections before payment. Monitoring has not begun.</p></form></div></div></section>
-
-    <section id="signup" aria-labelledby="signup-heading" hidden><div class="container"><div class="signup-card"><p class="eyebrow">Finish your setup</p><h2 id="signup-heading">Create your LeadDrop account</h2><p class="lead" style="font-size:1rem">Your Custom Lead Profile is saved below. Add your contact details, choose any add-ons, then continue securely to Stripe.</p><p class="signup-profile" id="signup-profile-summary" aria-live="polite"></p><form id="signup-form" novalidate><div class="form-grid"><label><span>Your name</span><input id="signup-name" name="name" autocomplete="name" required></label><label><span>Business name</span><input id="signup-business" name="business" autocomplete="organization" required></label><label><span>Email</span><input id="signup-email" name="email" type="email" autocomplete="email" required></label><label><span>Phone</span><input id="signup-phone" name="phone" type="tel" autocomplete="tel" required></label></div><div class="signup-options" aria-label="Optional add-ons"><label class="signup-option"><span><strong>SMS alerts</strong><br>Leads sent straight to your phone as text messages.</span><span>+$10/month <input id="signup-sms" type="checkbox"></span></label><label class="signup-option"><span><strong>Additional categories</strong><br>Add more service categories during your personalised setup.</span><span>+$10/month <input id="signup-categories" type="checkbox"></span></label></div><div class="signup-price"><span>Monthly total</span><strong id="signup-total">$31</strong></div><p id="signup-error" class="validation" role="alert"></p><button id="stripe-submit" class="btn" type="submit">Continue to secure Stripe checkout</button><p id="signup-status" class="signup-note" aria-live="polite"></p><p class="signup-note">Secured by Stripe. Cancel anytime. No lock-in.</p></form></div></div></section>
-
     <section><div class="container review-layout"><div><p class="eyebrow">Personally reviewed setup</p><h2>Every profile is reviewed before it goes live</h2><p class="lead">Every Custom Lead Profile is reviewed before activation and can be refined as your requirements change.</p><p style="color:var(--muted)">Our team configures your service area, preferred work and exclusions before monitoring begins. The aim is a practical profile that reflects the work you want to receive.</p></div><div class="review-media"><picture><source type="image/webp" srcset="assets/ld_trust-640.webp 640w, assets/ld_trust.webp 1120w" sizes="(min-width: 720px) 50vw, calc(100vw - 40px)"><img src="assets/ld_trust.webp" alt="LeadDrop Custom Lead Profile being reviewed before activation" width="1120" height="840" loading="lazy" decoding="async"></picture></div></div></section>
 
     <section class="alt"><div class="container"><div class="section-head"><p class="eyebrow">Why LeadDrop</p><h2>LeadDrop versus generic lead platforms</h2></div><div class="comparison"><table><thead><tr><th>What you get</th><th>LeadDrop</th><th>Generic lead platforms</th></tr></thead><tbody><tr><td>Setup</td><td>Custom Lead Profile</td><td>Broad category feed</td></tr><tr><td>Configuration</td><td>Personally reviewed setup</td><td>Self-serve defaults</td></tr><tr><td>Pricing</td><td>Fixed monthly subscription</td><td>Often priced per lead or credit</td></tr><tr><td>Extra lead fees</td><td>No pay-per-lead fees</td><td>May apply</td></tr><tr><td>Control</td><td>Locations and exclusions configured</td><td>Often limited filters</td></tr><tr><td>Ongoing fit</td><td>Matching refined over time</td><td>Usually static settings</td></tr></tbody></table></div></div></section>
 
-    <section id="pricing"><div class="container"><div class="section-head"><p class="eyebrow">Straightforward pricing</p><h2>One monthly plan, set up around you</h2></div><div class="pricing-wrap"><article class="pricing-card"><p class="eyebrow">LeadDrop monthly</p><p class="price">$31 <span>per month</span></p><p class="lead" style="font-size:1rem">No pay-per-lead fees. Cancel at any time.</p><ul class="feature-list"><li>Custom Lead Profile</li><li>Personal configuration</li><li>Selected service area</li><li>Selected service categories</li><li>Email and Telegram alerts</li><li>Profile refinements</li><li>No pay-per-lead fees</li><li>Cancel at any time</li></ul><p class="add-on"><strong style="color:var(--text)">Optional SMS alerts:</strong> available as a separate add-on where applicable.</p><p style="margin:24px 0 0"><a class="btn" href="#profile-builder">Build my Custom Lead Profile</a></p></article></div></div></section>
-
     <section class="alt"><div class="container"><div class="section-head"><p class="eyebrow">FAQ</p><h2>Questions before you set up?</h2></div><div class="faqs"><details><summary>What is a Custom Lead Profile?</summary><p>It is the set of preferences LeadDrop uses to configure your service area, travel radius, services, preferred job types, exclusions and alert methods.</p></details><details><summary>How does setup work?</summary><p>Start with the profile builder, then continue to signup. We review the details before activation and can clarify anything needed for a useful setup.</p></details><details><summary>Can I change my service area or job preferences?</summary><p>Yes. Your profile can be adjusted as your service area, services or preferred work changes.</p></details><details><summary>What if my location is not already monitored?</summary><p>Tell us where you work during setup. Availability depends on the communities and sources that can be monitored for your profile; do not assume coverage until it has been reviewed.</p></details><details><summary>How many leads should I expect?</summary><p>Lead volume varies by location, service category, season and the conversations available. LeadDrop does not guarantee a particular number of leads.</p></details><details><summary>Are leads exclusive?</summary><p>No exclusivity is claimed. A conversation may be visible to other people in the original community or match more than one appropriate profile.</p></details><details><summary>Can I access the original conversation?</summary><p>Where the source permits it, alerts include a link so you can open the original conversation and decide whether to respond.</p></details><details><summary>How are alerts delivered?</summary><p>Email and Telegram alerts are included. SMS may be available as an optional add-on where applicable.</p></details><details><summary>What if I receive irrelevant matches?</summary><p>Let us know. The profile can be refined if matches are too broad, too distant or unsuitable.</p></details><details><summary>Can I cancel?</summary><p>Yes. The plan is monthly and can be cancelled at any time.</p></details></div></div></section>
 
-    <section class="final"><div class="container"><div class="section-head"><p class="eyebrow">Ready when you are</p><h2>Tell LeadDrop what a good job looks like for your business.</h2><p class="lead">Start your Custom Lead Profile now. Monitoring begins only after your setup has been reviewed and activated.</p></div><a class="btn" href="#profile-builder">Start my LeadDrop setup</a></div></section>
+    <section class="final"><div class="container"><div class="section-head"><p class="eyebrow">Ready when you are</p><h2>Tell LeadDrop what a good job looks like for your business.</h2><p class="lead">Start your Custom Lead Profile now. Monitoring begins only after your setup has been reviewed and activated.</p></div><a class="btn" href="#sample-lead">Start my LeadDrop setup</a></div></section>
   </main>
-  <footer><div class="container footer-row"><div><strong style="color:var(--muted)">LeadDrop</strong> © 2026 · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a><br><a href="#how-it-works">How it works</a> · <a href="#pricing">Pricing</a> · <a href="#faq">FAQ</a><br><span>ABN 79 773 473 522</span></div><div style="display:flex;align-items:center;gap:16px;"><a href="https://www.facebook.com/leaddrop/" aria-label="Follow LeadDrop on Facebook" target="_blank" rel="noopener" style="display:flex;align-items:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg></a><a href="https://instagram.com/leaddrop.com.au" aria-label="Follow LeadDrop on Instagram" target="_blank" rel="noopener" style="display:flex;align-items:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="18" cy="6" r="1" fill="currentColor" stroke="none"/></svg></a><span style="display:flex;flex-direction:column;gap:2px;align-items:flex-start;"><span>Questions? Free Trial?</span><a href="mailto:info@leaddrop.com.au">info@leaddrop.com.au</a></span></div></div></footer>
+  <section class="final" id="free-report"><div class="container"><div class="section-head"><p class="eyebrow">Free weekly report</p><h2>See what you may have missed.</h2><p class="lead">Send us your details to join the free weekly report list. No card. No obligation.</p></div><div class="form-card" style="max-width:680px;margin:0 auto"><form id="free-report-form" novalidate><div class="form-grid"><label><span>Your name</span><input id="free-name" required autocomplete="name"></label><label><span>Business name</span><input id="free-business" required autocomplete="organization"></label><label><span>Email</span><input id="free-email" type="email" required autocomplete="email"></label><label><span>Main trade</span><select id="free-trade" required><option value="">Choose a trade</option><option>Cleaning</option><option>Plumbing</option><option>Electrical</option><option>Building</option><option>Roofing</option><option>Landscaping</option><option>Painting</option><option>Other local service</option></select></label><label class="full"><span>Service area</span><input id="free-area" required placeholder="e.g. Clarence Valley"></label></div><label style="display:flex;gap:10px;align-items:flex-start;margin:18px 0;color:var(--muted)"><input id="free-consent" type="checkbox" required style="margin-top:4px;accent-color:var(--yellow)"><span>I agree to receive the free weekly LeadDrop report and understand I can unsubscribe at any time. See our <a href="/privacy.html">Privacy Policy</a>.</span></label><p id="free-report-error" class="validation" role="alert"></p><button class="btn" type="submit">Request my free weekly report</button><p id="free-report-status" class="signup-note" aria-live="polite">Sign up takes less than a minute.</p></form></div></div></section>
+  <footer><div class="container footer-row"><div><strong style="color:var(--muted)">LeadDrop</strong> © 2026 · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a><br><a href="#how-it-works">How it works</a> · <a href="#free-report">Free report</a> · <a href="#faq">FAQ</a><br><span>ABN 79 773 473 522</span></div><div style="display:flex;align-items:center;gap:16px;"><a href="https://www.facebook.com/leaddrop/" aria-label="Follow LeadDrop on Facebook" target="_blank" rel="noopener" style="display:flex;align-items:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg></a><a href="https://instagram.com/leaddrop.com.au" aria-label="Follow LeadDrop on Instagram" target="_blank" rel="noopener" style="display:flex;align-items:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="18" cy="6" r="1" fill="currentColor" stroke="none"/></svg></a><span style="display:flex;flex-direction:column;gap:2px;align-items:flex-start;"><span>Questions? Free Trial?</span><a href="mailto:info@leaddrop.com.au">info@leaddrop.com.au</a></span></div></div></footer>
   <script>
     (function () {
-      var profileForm = document.getElementById('profile-form');
-      var profileFields = ['area', 'radius', 'category', 'services', 'exclusions'].map(function (id) { return document.getElementById(id); });
-      var summary = document.getElementById('profile-summary-copy');
-      var profileError = document.getElementById('profile-error');
-      var signup = document.getElementById('signup');
-      var signupForm = document.getElementById('signup-form');
-      var signupError = document.getElementById('signup-error');
-      signupError.tabIndex = -1;
-      var signupStatus = document.getElementById('signup-status');
-      var submitButton = document.getElementById('stripe-submit');
-      var profileStarted = false;
-      var signupStarted = false;
-      var isSubmitting = false;
-      var onboardingKey = '';
-      var categoryList = ['Plumbing & Gas','Electrical','Building','Carpentry','Handyman','Roofing','Cleaning','Landscaping','Painting','Tiling','Concreting','Plastering','Earthmoving','Gardening','Pest Control','HVAC & Solar','Automotive','Locksmiths','Fencing','Welding','Glazing','Cabinetmaking','Flooring','Waterproofing','Tech Support','Rubbish Removal','Other service'];
-      var extraCategories = [];
-      var stripeLinks = { '00':'https://buy.stripe.com/14A4gsehm7x9goAg6na3u08', '10':'https://buy.stripe.com/00waEQ0qweZBdcog6na3u09', '01':'https://buy.stripe.com/7sY6oAddi18Lb4g5rJa3u0a', '11':'https://buy.stripe.com/28E00cc9e8Bdb4gaM3a3u0b' };
-      function track(eventName) { if (typeof window.gtag === 'function') window.gtag('event', eventName); }
-      function workType() { return document.querySelector('input[name="work-type"]:checked').value; }
-      function categoryValues() { var primary = document.getElementById('category').value; return primary ? [primary].concat(extraCategories) : []; }
-      function unlimitedEnabled() { return document.getElementById('signup-categories').checked; }
-      function renderCategories() { var host=document.getElementById('category-controls'), primary=document.getElementById('category').value, count=categoryValues().length, max=unlimitedEnabled()?categoryList.length:3; host.querySelector('.category-count').textContent=count+' selected · '+(unlimitedEnabled()?'Unlimited categories enabled':'Up to 3 included'); host.querySelector('.category-chips').innerHTML=extraCategories.map(function(c){return '<button type="button" class="category-chip" aria-label="Remove '+c.replace(/&/g,'and')+'" data-category="'+c.replace(/&/g,'&amp;')+'">'+c+' ×</button>';}).join(''); host.querySelector('.category-add').disabled=!primary||count>=max; host.querySelector('.category-help').textContent=!unlimitedEnabled()&&count>=3?'Your plan includes three categories. Select Unlimited categories to add more.':''; }
-      function setupCategories() { var primary=document.getElementById('category'), label=primary.closest('label'); categoryList.forEach(function(c){if(!Array.prototype.some.call(primary.options,function(o){return o.value===c;})){var o=document.createElement('option');o.value=c;o.textContent=c;primary.appendChild(o);}}); var host=document.createElement('div');host.id='category-controls';host.className='full';host.innerHTML='<p class="category-count" aria-live="polite"></p><label><span>Add service category</span><select class="category-add" aria-label="Add service category"><option value="">Choose another category</option></select></label><div class="category-chips" aria-label="Additional selected categories"></div><p class="category-help validation" aria-live="polite"></p>'; label.parentNode.insertBefore(host,label.nextSibling); var add=host.querySelector('.category-add'); categoryList.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;add.appendChild(o);}); primary.addEventListener('change',function(){extraCategories=extraCategories.filter(function(c){return c!==primary.value;});renderCategories();updateProfile();}); add.addEventListener('change',function(){if(add.value&&!extraCategories.includes(add.value)&&add.value!==primary.value){extraCategories.push(add.value);add.value='';renderCategories();updateProfile();}});host.addEventListener('click',function(e){var b=e.target.closest('[data-category]');if(b){extraCategories=extraCategories.filter(function(c){return c!==b.getAttribute('data-category');});renderCategories();updateProfile();}}); renderCategories(); }
-      function profileText() {
-        var area = document.getElementById('area').value.trim();
-        var radius = document.getElementById('radius').value;
-        var category = document.getElementById('category').value;
-        var services = document.getElementById('services').value.trim();
-        var exclusions = document.getElementById('exclusions').value.trim();
-        if (!area || !category) return 'Choose your location and category to see your Custom Lead Profile.';
-        var focus = services ? services : category.toLowerCase() + ' requests';
-        var audience = workType() === 'both' ? 'residential and commercial customers' : workType() === 'residential' ? 'residential customers' : 'commercial customers';
-        var output = 'We’ll create a Custom Lead Profile for ' + focus + ' within ' + radius + ' km of ' + area + ', focused on ' + audience + '.';
-        if (exclusions) output += ' We’ll note these unwanted job types: ' + exclusions + '.';
-        return output;
-      }
-      function updateProfile() { summary.textContent = profileText(); }
-      function saveProfile() {
-        var data = { area:document.getElementById('area').value.trim(), radius:document.getElementById('radius').value, category:document.getElementById('category').value, additionalCategories:extraCategories, services:document.getElementById('services').value.trim(), workType:workType(), exclusions:document.getElementById('exclusions').value.trim() };
-        try { sessionStorage.setItem('leaddrop-profile', JSON.stringify(data)); } catch (e) {}
-        return data;
-      }
-      function updatePrice() {
-        var sms = document.getElementById('signup-sms').checked;
-        var categories = document.getElementById('signup-categories').checked;
-        var total = 31 + (sms ? 10 : 0) + (categories ? 10 : 0);
-        document.getElementById('signup-total').textContent = '$' + total;
-        return { total: total, stripeLink: stripeLinks[(sms ? '1' : '0') + (categories ? '1' : '0')] };
-      }
-      profileFields.forEach(function (field) { field.addEventListener('input', updateProfile); field.addEventListener('change', updateProfile); field.addEventListener('focus', function () { if (!profileStarted) { profileStarted = true; track('custom_lead_profile_started'); } }, { once:true }); });
-      document.querySelectorAll('input[name="work-type"]').forEach(function (item) { item.addEventListener('change', updateProfile); });
-      document.getElementById('reset-profile').textContent = 'Clear profile';
-      setupCategories();
-var menuToggle=document.querySelector('.mobile-menu-toggle'),mobileMenu=document.getElementById('mobile-menu');function closeMobileMenu(){if(!menuToggle||!mobileMenu)return;menuToggle.setAttribute('aria-expanded','false');menuToggle.setAttribute('aria-label','Open navigation menu');mobileMenu.hidden=true;}if(menuToggle&&mobileMenu){menuToggle.addEventListener('click',function(){var isOpen=menuToggle.getAttribute('aria-expanded')==='true';menuToggle.setAttribute('aria-expanded',String(!isOpen));menuToggle.setAttribute('aria-label',isOpen?'Open navigation menu':'Close navigation menu');mobileMenu.hidden=isOpen;});mobileMenu.querySelectorAll('a').forEach(function(link){link.addEventListener('click',closeMobileMenu);});window.matchMedia('(min-width:769px)').addEventListener('change',function(event){if(event.matches)closeMobileMenu();});}
-      document.querySelectorAll('section').forEach(function(s){var h=s.querySelector('h2');if(h&&h.textContent.indexOf('How LeadDrop works')!==-1)s.id='how-it-works';if(h&&h.textContent.indexOf('Questions before')!==-1)s.id='faq';});
-      document.querySelectorAll('.feature-list li').forEach(function(li){if(li.textContent.trim()==='Selected service categories')li.textContent='Up to 3 service categories';});
-      document.querySelectorAll('details').forEach(function(d){d.addEventListener('toggle',function(){if(d.open)track('faq_opened');});});
-      var sample=document.getElementById('sample-lead'); if(sample){sample.addEventListener('mouseenter',function(){track('sample_lead_viewed');},{once:true}); var tags=sample.querySelectorAll('.tag');if(tags[0])tags[0].textContent='Example LeadDrop alert'; var top=sample.querySelector('.alert-top span:last-child');if(top)top.remove();var note=sample.querySelector('.example-note:last-child');if(note)note.textContent='Illustrative example. Actual alerts and lead volume vary by location and service category.';}
-      document.querySelectorAll('a[href="#profile-builder"]').forEach(function(a){a.addEventListener('click',function(){track('pricing_cta_clicked');});});
-      document.getElementById('reset-profile').addEventListener('click', function () { profileForm.reset(); profileError.textContent = ''; signup.hidden = true; updateProfile(); document.getElementById('area').focus(); });
-      profileForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        if (!document.getElementById('area').value.trim() || !document.getElementById('category').value) { profileError.textContent = 'Please add your suburb or postcode and choose a primary category before continuing.'; document.getElementById(!document.getElementById('area').value.trim() ? 'area' : 'category').focus(); return; }
-        profileError.textContent = '';
-        saveProfile();
-        document.getElementById('signup-profile-summary').textContent = profileText();
-        signup.hidden = false;
-        track('custom_lead_profile_completed');
-        signup.scrollIntoView({ behavior:'smooth', block:'start' });
-        document.getElementById('signup-name').focus({ preventScroll:true });
-      });
-      var privacy=document.createElement('label');privacy.className='signup-note';privacy.innerHTML='<input id="privacy-acknowledged" type="checkbox" required> I agree to the <a href="/terms.html">LeadDrop Terms</a> and acknowledge the <a href="/privacy.html">Privacy Policy</a>.';submitButton.parentNode.insertBefore(privacy,submitButton);
-      document.getElementById('signup-categories').closest('.signup-option').querySelector('strong').textContent='Unlimited categories';
-      document.getElementById('signup-categories').closest('.signup-option').querySelector('br').nextSibling.textContent=' Monitor additional service categories as part of your Custom Lead Profile.';
-      ['signup-sms','signup-categories'].forEach(function (id) { document.getElementById(id).addEventListener('change', function(){ updatePrice(); renderCategories(); }); });
-      signupForm.addEventListener('focusin', function () { if (!signupStarted) { signupStarted = true; track('signup_started'); } });
-      signupForm.addEventListener('submit', async function (event) {
-        event.preventDefault();
-        if (isSubmitting) return;
-        if (!signupForm.checkValidity()) { signupError.textContent = 'Please complete your contact details and agree to the Terms and Privacy Policy before checkout.'; signupError.focus(); signupForm.reportValidity(); return; }
-        if (!unlimitedEnabled() && categoryValues().length > 3) { signupError.textContent='Remove categories until only three remain, or select Unlimited categories.'; signupError.focus(); return; }
-        var profile = saveProfile();
-        var price = updatePrice();
-        var payload = {
-          name: document.getElementById('signup-name').value.trim(),
-          business_name: document.getElementById('signup-business').value.trim(),
-          email: document.getElementById('signup-email').value.trim(),
-          phone: document.getElementById('signup-phone').value.trim(),
-          service_area: profile.area,
-          service_radius_km: Number(profile.radius),
-          primary_category: profile.category,
-          preferred_services: profile.services,
-          work_type: profile.workType,
-          exclusions: profile.exclusions,
-          sms_addon: document.getElementById('signup-sms').checked,
-          unlimited_categories_addon: document.getElementById('signup-categories').checked,
-          additional_categories: profile.additionalCategories || [],
-          privacy_acknowledged: document.getElementById('privacy-acknowledged').checked,
-          idempotency_key: onboardingKey || (onboardingKey = (window.crypto && crypto.randomUUID ? crypto.randomUUID() : '00000000-0000-4000-8000-'+Date.now().toString().padStart(12,'0'))),
-          source: 'leaddrop.com.au'
-        };
-        track('onboarding_submission_started'); isSubmitting = true;
-        submitButton.disabled = true;
-        submitButton.textContent = 'Saving your setup…';
-        signupError.textContent = '';
-        signupStatus.textContent = 'Saving your setup…';
-        try {
-          var response = await fetch('/api/leaddrop-onboarding', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(payload) });
-          var result = await response.json().catch(function () { return {}; });
-          if (!response.ok || !result.success || !result.checkout_url) throw new Error((result.field_errors && Object.values(result.field_errors)[0]) || result.message || 'We could not save your setup. Please try again.');
-          var checkoutUrl = new URL(result.checkout_url);
-          track('onboarding_submission_succeeded');
-          track('stripe_checkout_opened');
-          window.location.assign(checkoutUrl.toString());
-        } catch (error) {
-          track('onboarding_submission_failed'); signupError.textContent = error && error.message ? error.message : 'We could not save your setup. Please try again.';
-          signupStatus.textContent = '';
-          isSubmitting = false;
-          submitButton.disabled = false;
-          submitButton.textContent = 'Continue to secure Stripe checkout';
-        }
-      });
-      updateProfile();
-      updatePrice();
+      var toggle=document.querySelector('.mobile-menu-toggle');
+      var menu=document.getElementById('mobile-menu');
+      if(toggle&&menu){toggle.addEventListener('click',function(){var open=toggle.getAttribute('aria-expanded')==='true';toggle.setAttribute('aria-expanded',String(!open));menu.hidden=open;});}
+      document.querySelectorAll('details').forEach(function(d){d.addEventListener('toggle',function(){if(d.open)d.scrollIntoView({block:'nearest'});});});
     }());
   </script>
 </body>

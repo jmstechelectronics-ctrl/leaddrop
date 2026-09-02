@@ -11,18 +11,20 @@
   <meta property="og:url" content="https://leaddrop.com.au/">
   <meta property="og:title" content="LeadDrop | Local Service Leads Matched to Your Business">
   <meta property="og:description" content="LeadDrop monitors local conversations for people looking for services like yours, configured around your service area and preferred work.">
-  <meta property="og:image" content="https://leaddrop.com.au/assets/leaddrop-brisbane-electrician-hero.webp">
+  <meta property="og:image" content="https://leaddrop.com.au/beta/assets/ld_hero.webp">
   <meta property="og:image:alt" content="LeadDrop electrician lead alert for Carindale, Brisbane">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="LeadDrop | Local Service Leads Matched to Your Business">
   <meta name="twitter:description" content="Local service leads matched to your service area, preferred work and Custom Lead Profile.">
-  <meta name="twitter:image" content="https://leaddrop.com.au/assets/leaddrop-brisbane-electrician-hero.webp">
+  <meta name="twitter:image" content="https://leaddrop.com.au/beta/assets/ld_hero.webp">
   <meta name="theme-color" content="#0b0c0e">
+  <base href="/beta/">
   <link rel="icon" type="image/png" href="/favicon-32.png">
   <link rel="preload" as="image" href="assets/ld_hero.webp" type="image/webp" imagesrcset="assets/ld_hero-720.webp 720w, assets/ld_hero.webp 1360w" imagesizes="100vw">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"LeadDrop","url":"https://leaddrop.com.au/","logo":"https://leaddrop.com.au/logo-transparent.png"},{"@type":"Service","name":"LeadDrop Custom Lead Profile","provider":{"@type":"Organization","name":"LeadDrop"},"areaServed":{"@type":"Country","name":"Australia"},"description":"Lead monitoring configured around a customer's service area, travel radius, services, preferred jobs, exclusions and alert preferences."}]}</script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-76CX8HQWR7"></script>
   <script>
+    document.addEventListener('DOMContentLoaded', function () {
     (function () {
       var form=document.getElementById('free-report-form');
       if(!form)return;
@@ -52,6 +54,7 @@
       if(toggle&&menu){toggle.addEventListener('click',function(){var open=toggle.getAttribute('aria-expanded')==='true';toggle.setAttribute('aria-expanded',String(!open));menu.hidden=open;});}
       document.querySelectorAll('details').forEach(function(d){d.addEventListener('toggle',function(){if(d.open)d.scrollIntoView({block:'nearest'});});});
     }());
+    });
   </script>
   <style>
     :root { --bg:#0b0c0e; --surface:#141518; --surface-2:#1a1b1e; --text:#f0f0ec; --muted:#aaa9a1; --dim:#77766f; --accent:#eab308; --accent-light:#facc15; --line:rgba(255,255,255,.1); --radius:14px; --font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
