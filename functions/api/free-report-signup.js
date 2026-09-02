@@ -14,8 +14,29 @@ async function ensureSchema(db) {
     'ALTER TABLE free_report_signups ADD COLUMN confirmed_at TEXT',
     'ALTER TABLE free_report_signups ADD COLUMN consent_at TEXT',
     'ALTER TABLE free_report_signups ADD COLUMN unsubscribe_token_hash TEXT',
-    'ALTER TABLE free_report_signups ADD COLUMN unsubscribed_at TEXT'
+    'ALTER TABLE free_report_signups ADD COLUMN unsubscribed_at TEXT',
+    'ALTER TABLE free_report_signups ADD COLUMN admin_notified_at TEXT',
+    'ALTER TABLE free_report_signups ADD COLUMN notification_error TEXT'
   ]) { try { await db.exec(sql); } catch (_) {} }
+}
+
+async function notifyTelegram(env, signup) {
+  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_OWNER_CHAT_ID) return { skipped: true };
+  const text = [
+    'New LeadDrop signup',
+    `Name: ${signup.name}`,
+    `Business: ${signup.business}`,
+    `Email: ${signup.email}`,
+    `Trade: ${signup.trade}`,
+    `Area: ${signup.area}`
+  ].join('\n');
+  const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: env.TELEGRAM_OWNER_CHAT_ID, text, disable_web_page_preview: true })
+  });
+  if (!response.ok) throw new Error(`Telegram returned ${response.status}`);
+  return { skipped: false };
 }
 
 export async function onRequestPost({ request, env }) {
@@ -38,6 +59,13 @@ export async function onRequestPost({ request, env }) {
   try {
     await ensureSchema(env.ONBOARDING_DB);
     await env.ONBOARDING_DB.prepare('INSERT INTO free_report_signups (id,name,business_name,email,trade,service_area,status,source,created_at,consent_at,unsubscribe_token_hash,confirmed_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)').bind(id, name, business, email, trade, area, 'confirmed', 'beta-free-report', now.toISOString(), now.toISOString(), unsubscribeTokenHash, now.toISOString()).run();
+    try {
+      const notification = await notifyTelegram(env, { name, business, email, trade, area });
+      if (!notification.skipped) await env.ONBOARDING_DB.prepare('UPDATE free_report_signups SET admin_notified_at=? WHERE id=?').bind(new Date().toISOString(), id).run();
+    } catch (error) {
+      console.error('LeadDrop Telegram notification failed', error);
+      await env.ONBOARDING_DB.prepare('UPDATE free_report_signups SET notification_error=? WHERE id=?').bind('Telegram notification failed', id).run();
+    }
     return json({ success: true, message: 'You’re on the free weekly report list. We’ll email you when reports begin.' }, 201);
   } catch (_) {
     return json({ success: false, message: 'We could not save your request. Please try again.' }, 500);
