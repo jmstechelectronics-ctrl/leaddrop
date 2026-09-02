@@ -91,7 +91,7 @@ def send(to_email: str, subject: str, html: str) -> bool:
 # ── CLI ──────────────────────────────────────────────────────
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="LeadDrop Email Engine")
-    parser.add_argument("template", choices=["welcome", "lead", "admin-signup", "telegram-setup"])
+    parser.add_argument("template", choices=["welcome", "lead", "admin-signup", "telegram-setup", "weekly-report"])
     parser.add_argument("--email", required=True, help="Recipient email")
     parser.add_argument("--name", default="", help="Customer name")
     parser.add_argument("--business", default="", help="Business name")
@@ -106,6 +106,8 @@ if __name__ == "__main__":
     parser.add_argument("--lead-count", default="1", help="Leads matched today")
     parser.add_argument("--category-count", default="0", help="Number of categories")
     parser.add_argument("--subscriber-id", default="", help="Subscriber identifier for Telegram linking")
+    parser.add_argument("--report-date", default="", help="Date displayed on a weekly report")
+    parser.add_argument("--lead-search-url", default="#", help="Source search URL for weekly-report leads")
     parser.add_argument("--dry-run", action="store_true", help="Print HTML, don't send")
 
     args = parser.parse_args()
