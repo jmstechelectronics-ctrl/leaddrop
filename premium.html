@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Choose your LeadDrop Premium alerts and continue to secure checkout.">
+  <meta name="robots" content="noindex,follow">
+  <title>LeadDrop Premium — Get local leads within the hour</title>
+  <link rel="icon" href="/favicon-32.png">
+  <style>
+    :root { --ink:#161713; --muted:#696b63; --paper:#fbfaf6; --card:#fff; --line:#e8e6dc; --yellow:#eab308; --yellow-soft:#fff7d4; --dark:#171812; --radius:16px; font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    * { box-sizing:border-box; } body { margin:0; color:var(--ink); background:var(--paper); line-height:1.5; } a { color:inherit; }
+    nav { border-bottom:1px solid var(--line); background:rgba(251,250,246,.92); } .nav { max-width:960px; margin:auto; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; } .logo img { height:30px; display:block; } .back { color:var(--muted); font-size:14px; text-decoration:none; }
+    main { max-width:960px; margin:auto; padding:68px 24px 84px; } .eyebrow { color:#8a7100; font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; margin:0 0 12px; } h1 { max-width:730px; margin:0; font-size:clamp(38px,6vw,62px); letter-spacing:-.045em; line-height:1.04; } .intro { max-width:640px; color:var(--muted); font-size:18px; margin:20px 0 42px; }
+    .grid { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr); gap:24px; align-items:start; } .panel { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:28px; box-shadow:0 12px 35px rgba(28,27,19,.045); }
+    h2 { font-size:22px; letter-spacing:-.025em; margin:0 0 6px; } .small { color:var(--muted); font-size:14px; margin:0 0 22px; } .option { display:flex; align-items:flex-start; gap:14px; border:1px solid var(--line); border-radius:12px; padding:17px; margin:12px 0; cursor:pointer; transition:border .18s,background .18s; } .option:has(input:checked) { border-color:#caa10a; background:var(--yellow-soft); } .option input { width:18px; height:18px; margin:3px 0 0; accent-color:#b58d00; } .option strong { display:block; font-size:16px; } .option span { display:block; color:var(--muted); font-size:14px; margin-top:3px; } .option b { margin-left:auto; white-space:nowrap; font-size:14px; }
+    .summary { position:sticky; top:20px; background:var(--dark); color:#fff; border-radius:var(--radius); padding:28px; } .summary .eyebrow { color:#f2d25c; } .summary h2 { font-size:25px; } .price { font-size:46px; font-weight:800; letter-spacing:-.055em; margin:18px 0 2px; } .price small { color:#c5c7bd; font-size:15px; font-weight:500; letter-spacing:0; } .includes { list-style:none; margin:24px 0; padding:0; } .includes li { color:#e5e6df; padding:8px 0; font-size:14px; } .includes li::before { content:"✓"; color:#f1cd37; font-weight:800; margin-right:10px; } .checkout { display:block; width:100%; border:0; border-radius:9px; padding:15px; text-align:center; background:var(--yellow); color:#171812; font-size:16px; font-weight:800; text-decoration:none; } .checkout:hover { background:#f3c51a; } .fine { color:#aeb0a6; font-size:12px; line-height:1.5; margin:14px 0 0; text-align:center; }
+    .note { margin:38px 0 0; padding:22px; background:#f2f0e8; border-radius:12px; color:#53554d; font-size:14px; } .note strong { color:var(--ink); } footer { border-top:1px solid var(--line); padding:24px; color:var(--muted); font-size:13px; text-align:center; }
+    @media (max-width:720px) { main { padding-top:46px; } .grid { grid-template-columns:1fr; } .summary { position:static; } .panel,.summary { padding:22px; } }
+  </style>
+</head>
+<body>
+  <nav><div class="nav"><a class="logo" href="/"><img src="/logo-nav.svg" alt="LeadDrop"></a><a class="back" href="/">Back to LeadDrop</a></div></nav>
+  <main>
+    <p class="eyebrow">LeadDrop Premium</p>
+    <h1>See matching local leads within the hour.</h1>
+    <p class="intro">Choose how you want LeadDrop Premium configured. We monitor local public service requests and deliver matching leads as they are identified, instead of making you wait for the weekly report.</p>
+    <div class="grid">
+      <section class="panel" aria-labelledby="options-title">
+        <h2 id="options-title">Build your Premium plan</h2>
+        <p class="small">Every plan includes hourly email or Telegram lead alerts and direct links to the original conversation.</p>
+        <label class="option"><input id="sms" type="checkbox"><span><strong>SMS alerts</strong><span>Receive lead alerts by text message as well as email or Telegram.</span></span><b>+$10/mo</b></label>
+        <label class="option"><input id="categories" type="checkbox"><span><strong>Unlimited categories</strong><span>Monitor all LeadDrop service categories instead of up to three.</span></span><b>+$10/mo</b></label>
+        <div class="note"><strong>What happens next:</strong> secure checkout, then we confirm your service area, preferred jobs and exclusions before activating Premium alerts.</div>
+      </section>
+      <aside class="summary" aria-live="polite">
+        <p class="eyebrow">Your plan</p>
+        <h2>LeadDrop Premium</h2>
+        <p id="price" class="price">$31 <small>/ month</small></p>
+        <ul class="includes"><li>Hourly matching lead alerts</li><li>Original conversation links</li><li>Up to 3 service categories</li><li>Personalised service-area matching</li><li>Cancel anytime</li></ul>
+        <a id="checkout" class="checkout" href="https://buy.stripe.com/bJe6oJcxZ508gC47veg7e09">Continue to secure checkout</a>
+        <p class="fine">Secure payment by Stripe. Lead volume varies by area and category; no lead quantity or exclusivity is guaranteed.</p>
+      </aside>
+    </div>
+  </main>
+  <footer>LeadDrop — Local leads, dropped. · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · <a href="mailto:info@leaddrop.com.au">info@leaddrop.com.au</a></footer>
+  <script>
+    const plans = {
+      '00': { price: 31, url: 'https://buy.stripe.com/bJe6oJcxZ508gC47veg7e09' },
+      '10': { price: 41, url: 'https://buy.stripe.com/eVqaEZ2Xp0JS3Pi7veg7e0a' },
+      '01': { price: 41, url: 'https://buy.stripe.com/3cIdRb55x2S01Ha5n6g7e0b' },
+      '11': { price: 51, url: 'https://buy.stripe.com/aFa00lapRfEMbhKbLug7e0c' }
+    };
+    const sms = document.getElementById('sms');
+    const categories = document.getElementById('categories');
+    const price = document.getElementById('price');
+    const checkout = document.getElementById('checkout');
+    function updatePlan() {
+      const plan = plans[`${sms.checked ? '1' : '0'}${categories.checked ? '1' : '0'}`];
+      price.innerHTML = `$${plan.price} <small>/ month</small>`;
+      checkout.href = plan.url;
+      checkout.textContent = `Continue to secure checkout — $${plan.price}/mo`;
+    }
+    sms.addEventListener('change', updatePlan);
+    categories.addEventListener('change', updatePlan);
+    updatePlan();
+  </script>
+</body>
+</html>
