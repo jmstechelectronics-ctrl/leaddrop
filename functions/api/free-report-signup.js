@@ -1,7 +1,5 @@
 const clean = (value, max) => typeof value === 'string' ? value.trim().replace(/\s+/g, ' ').slice(0, max) : '';
 const json = (body, status = 200) => Response.json(body, { status, headers: { 'Cache-Control': 'no-store' } });
-const escapeHtml = (value) => value.replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
-
 async function sha256(value) {
   const bytes = new TextEncoder().encode(value);
   const digest = await crypto.subtle.digest('SHA-256', bytes);
@@ -31,36 +29,16 @@ export async function onRequestPost({ request, env }) {
   const name = clean(body.name, 100), business = clean(body.business, 150), email = clean(body.email, 254).toLowerCase(), trade = clean(body.trade, 80), area = clean(body.area, 120);
   if (name.length < 2 || business.length < 2 || trade.length < 2 || area.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ success: false, message: 'Please complete every field with a valid email address.' }, 400);
   if (body.consent !== true) return json({ success: false, message: 'Please confirm you want to receive the free weekly report.' }, 400);
-  if (!env.ONBOARDING_DB || !env.RESEND_API_KEY) return json({ success: false, message: 'The beta email service is not configured yet.' }, 503);
+  if (!env.ONBOARDING_DB) return json({ success: false, message: 'The signup service is not configured yet.' }, 503);
 
   const id = `fr_${crypto.randomUUID().replaceAll('-', '')}`;
-  const token = crypto.randomUUID() + crypto.randomUUID();
-  const tokenHash = await sha256(token);
   const unsubscribeToken = crypto.randomUUID() + crypto.randomUUID();
   const unsubscribeTokenHash = await sha256(unsubscribeToken);
   const now = new Date();
-  const expires = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-  const confirmUrl = `${env.PUBLIC_SITE_URL || 'https://leaddrop.com.au'}/api/confirm?token=${encodeURIComponent(token)}`;
-  const unsubscribeUrl = `${env.PUBLIC_SITE_URL || 'https://leaddrop.com.au'}/api/unsubscribe?token=${encodeURIComponent(unsubscribeToken)}`;
   try {
     await ensureSchema(env.ONBOARDING_DB);
-    await env.ONBOARDING_DB.prepare('INSERT INTO free_report_signups (id,name,business_name,email,trade,service_area,status,source,created_at,consent_at,token_hash,token_expires_at,unsubscribe_token_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id, name, business, email, trade, area, 'pending_confirmation', 'beta-free-report', now.toISOString(), now.toISOString(), tokenHash, expires.toISOString(), unsubscribeTokenHash).run();
-
-    const emailResponse = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: env.RESEND_FROM || 'LeadDrop <reports@leaddrop.com.au>',
-        to: [email],
-        subject: 'Confirm your free LeadDrop weekly report',
-        html: `<p>Hi ${escapeHtml(name)},</p><p>Click below to confirm your free LeadDrop weekly report:</p><p><a href="${confirmUrl}">Confirm my free report</a></p><p>This link expires in 24 hours. If you did not request this, you can ignore this email.</p><p><a href="${unsubscribeUrl}">Unsubscribe from the free weekly report</a></p>`
-      })
-    });
-    if (!emailResponse.ok) {
-      await env.ONBOARDING_DB.prepare('UPDATE free_report_signups SET status=? WHERE id=?').bind('email_failed', id).run();
-      return json({ success: false, message: 'We could not send the confirmation email. Please try again.' }, 502);
-    }
-    return json({ success: true, message: 'Check your inbox to confirm your free weekly report.' }, 201);
+    await env.ONBOARDING_DB.prepare('INSERT INTO free_report_signups (id,name,business_name,email,trade,service_area,status,source,created_at,consent_at,unsubscribe_token_hash,confirmed_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)').bind(id, name, business, email, trade, area, 'confirmed', 'beta-free-report', now.toISOString(), now.toISOString(), unsubscribeTokenHash, now.toISOString()).run();
+    return json({ success: true, message: 'You’re on the free weekly report list. We’ll email you when reports begin.' }, 201);
   } catch (_) {
     return json({ success: false, message: 'We could not save your request. Please try again.' }, 500);
   }
