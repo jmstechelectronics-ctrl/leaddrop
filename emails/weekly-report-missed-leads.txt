@@ -3,7 +3,10 @@ Leads you may have missed — {report_date}
 {/subject}
 
 {body}
-<div style="padding:28px 0 8px;text-align:center;">
-  <h2 style="color:#f0f0ec;font-size:22px;margin:0;">Leads you may have missed!</h2>
+<div style="padding:8px 0 20px;text-align:center;">
+  <h2 style="color:#f0f0ec;font-size:22px;margin:0 0 10px;">Leads you may have missed!</h2>
+  <p style="color:#c7c7c2;font-size:15px;line-height:1.55;margin:0;">There were no new verified matches this week, so here are recent local service requests still worth checking.</p>
 </div>
+
+{lead_cards}
 {/body}

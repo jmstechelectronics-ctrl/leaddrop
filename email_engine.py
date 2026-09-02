@@ -120,13 +120,14 @@ if __name__ == "__main__":
     dry_run = kwargs.pop("dry_run")
     del kwargs["email"]  # handled separately
 
-    if template_name == "weekly-report":
+    if template_name in {"weekly-report", "weekly-report-missed-leads"}:
         cards_file = Path(kwargs.pop("lead_cards_file", ""))
         if not cards_file.is_file():
-            parser.error("weekly-report requires --lead-cards-file containing exact Facebook post links")
+            parser.error("weekly report requires --lead-cards-file containing exact Facebook post links")
         cards = cards_file.read_text()
-        if not DIRECT_FACEBOOK_POST_URL.search(cards):
-            parser.error("weekly-report lead cards must contain at least one exact Facebook post permalink; group-search links are not allowed")
+        facebook_links = re.findall(r'''href=["'](https?://[^"']*facebook\.com[^"']*)["']''', cards, flags=re.IGNORECASE)
+        if not facebook_links or any(not DIRECT_FACEBOOK_POST_URL.fullmatch(link) for link in facebook_links):
+            parser.error("weekly report lead cards must use exact Facebook post permalinks; group-search links are not allowed")
         kwargs["lead_cards"] = cards
     
     subject, html = render(template_name, email=args.email, **kwargs)

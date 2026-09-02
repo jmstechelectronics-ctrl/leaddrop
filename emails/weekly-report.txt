@@ -1,10 +1,10 @@
 {subject}
-Your Byron Bay electrician leads — {report_date}
+Your local lead report — {report_date}
 {/subject}
 
 {body}
 <p style="color:#c7c7c2;font-size:16px;line-height:1.6;margin:0 0 24px;">Hi there,</p>
-<p style="color:#c7c7c2;font-size:16px;line-height:1.6;margin:0 0 28px;">Here are this week's verified local matches. Each lead opens the exact original Facebook post.</p>
+<p style="color:#c7c7c2;font-size:16px;line-height:1.6;margin:0 0 28px;">Here are the verified local service requests we found in your area. Each lead opens the exact original Facebook post.</p>
 
 {lead_cards}
 
