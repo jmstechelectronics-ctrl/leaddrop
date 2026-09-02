@@ -28,6 +28,7 @@ Your Byron Bay electrician leads — {report_date}
   <p style="color:#c7c7c2;font-size:14px;line-height:1.55;margin:0;">Sam is asking for recommendations for motorbike wiring help. This is only a fit if you handle motorcycle or vehicle electrical work.</p>
 </div>
 
-<p style="color:#c7c7c2;font-size:15px;line-height:1.6;margin:0 0 8px;"><strong style="color:#f0f0ec;">Quick note:</strong> these are public Facebook-group requests. Open the matching-post search, find the named post, and reply only where the job fits your work.</p>
-<p style="color:#8f918b;font-size:13px;line-height:1.5;margin:0;">LeadDrop surfaces local demand; it does not guarantee availability or a response.</p>
+<div style="border-top:1px solid #303236;margin:32px 0 0;padding:28px 0 0;text-align:center;">
+  <h2 style="color:#f0f0ec;font-size:20px;margin:0;">Leads you may have missed!</h2>
+</div>
 {/body}

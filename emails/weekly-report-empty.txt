@@ -1,0 +1,9 @@
+{subject}
+Your Byron Bay electrician report — {report_date}
+{/subject}
+
+{body}
+<div style="padding:28px 0 8px;text-align:center;">
+  <h2 style="color:#f0f0ec;font-size:22px;margin:0;">Leads you may have missed!</h2>
+</div>
+{/body}
