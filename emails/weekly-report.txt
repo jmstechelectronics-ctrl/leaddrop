@@ -4,29 +4,9 @@ Your Byron Bay electrician leads — {report_date}
 
 {body}
 <p style="color:#c7c7c2;font-size:16px;line-height:1.6;margin:0 0 24px;">Hi there,</p>
-<p style="color:#c7c7c2;font-size:16px;line-height:1.6;margin:0 0 28px;">Here are the best current electrician matches found in <strong style="color:#f0f0ec;">Byron Bay Community Board</strong>. Check that each request is still open before replying.</p>
+<p style="color:#c7c7c2;font-size:16px;line-height:1.6;margin:0 0 28px;">Here are this week's verified local matches. Each lead opens the exact original Facebook post.</p>
 
-<div style="background:#202225;border:1px solid #303236;border-radius:10px;padding:20px;margin:0 0 16px;">
-  <p style="color:#eab308;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px;">Priority · mobile auto electrician</p>
-  <h2 style="color:#f0f0ec;font-size:18px;margin:0 0 8px;">Car inspection needed in Byron — this week</h2>
-  <p style="color:#c7c7c2;font-size:14px;line-height:1.55;margin:0 0 14px;">Lilly is looking for an auto electrician to inspect a car this week. Mobile service in Byron is preferred, though they can take the vehicle to a workshop.</p>
-  <p style="color:#8f918b;font-size:12px;margin:0 0 14px;">Best fit: auto electrical, diagnostics or mobile vehicle electrical work.</p>
-  <a href="{lead_search_url}" style="display:inline-block;background:#eab308;border-radius:6px;color:#171717;font-size:14px;font-weight:700;padding:10px 14px;text-decoration:none;">Open matching posts</a>
-</div>
-
-<div style="background:#202225;border:1px solid #303236;border-radius:10px;padding:20px;margin:0 0 16px;">
-  <p style="color:#eab308;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px;">Strong match · solar &amp; battery</p>
-  <h2 style="color:#f0f0ec;font-size:18px;margin:0 0 8px;">Solar/battery electrical problem</h2>
-  <p style="color:#c7c7c2;font-size:14px;line-height:1.55;margin:0 0 14px;">Collin is seeking an experienced solar and battery electrician to help troubleshoot a problem.</p>
-  <p style="color:#8f918b;font-size:12px;margin:0 0 14px;">Best fit: licensed electrician with solar, battery or off-grid diagnostics experience.</p>
-  <a href="{lead_search_url}" style="display:inline-block;background:#eab308;border-radius:6px;color:#171717;font-size:14px;font-weight:700;padding:10px 14px;text-decoration:none;">Open matching posts</a>
-</div>
-
-<div style="background:#1a1b1d;border:1px solid #303236;border-radius:10px;padding:20px;margin:0 0 28px;">
-  <p style="color:#a5a69f;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px;">Specialist lead · vehicle wiring</p>
-  <h2 style="color:#f0f0ec;font-size:18px;margin:0 0 8px;">Motorbike electrical wiring</h2>
-  <p style="color:#c7c7c2;font-size:14px;line-height:1.55;margin:0;">Sam is asking for recommendations for motorbike wiring help. This is only a fit if you handle motorcycle or vehicle electrical work.</p>
-</div>
+{lead_cards}
 
 <div style="border-top:1px solid #303236;margin:32px 0 0;padding:28px 0 0;text-align:center;">
   <h2 style="color:#f0f0ec;font-size:20px;margin:0;">Leads you may have missed!</h2>

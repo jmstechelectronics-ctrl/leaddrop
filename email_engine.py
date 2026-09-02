@@ -31,6 +31,10 @@ SMTP_PORT = 465
 FROM_EMAIL = "LeadDrop <info@leaddrop.com.au>"
 FROM_ADDR = "info@leaddrop.com.au"
 PASS_FILE = Path(os.path.expanduser("~/.config/leaddrop/smtp-pass.txt"))
+DIRECT_FACEBOOK_POST_URL = re.compile(
+    r'https://(?:www\.)?facebook\.com/(?:groups/[^/]+/posts/\d+/?(?:\?[^\s"\']*)?|permalink\.php\?[^\s"\']*story_fbid=\d+)',
+    re.IGNORECASE,
+)
 
 # ── Template engine ──────────────────────────────────────────
 def load_template(name: str) -> dict:
@@ -107,7 +111,7 @@ if __name__ == "__main__":
     parser.add_argument("--category-count", default="0", help="Number of categories")
     parser.add_argument("--subscriber-id", default="", help="Subscriber identifier for Telegram linking")
     parser.add_argument("--report-date", default="", help="Date displayed on a weekly report")
-    parser.add_argument("--lead-search-url", default="#", help="Source search URL for weekly-report leads")
+    parser.add_argument("--lead-cards-file", default="", help="HTML file containing weekly lead cards with exact Facebook post links")
     parser.add_argument("--dry-run", action="store_true", help="Print HTML, don't send")
 
     args = parser.parse_args()
@@ -115,6 +119,15 @@ if __name__ == "__main__":
     template_name = kwargs.pop("template")
     dry_run = kwargs.pop("dry_run")
     del kwargs["email"]  # handled separately
+
+    if template_name == "weekly-report":
+        cards_file = Path(kwargs.pop("lead_cards_file", ""))
+        if not cards_file.is_file():
+            parser.error("weekly-report requires --lead-cards-file containing exact Facebook post links")
+        cards = cards_file.read_text()
+        if not DIRECT_FACEBOOK_POST_URL.search(cards):
+            parser.error("weekly-report lead cards must contain at least one exact Facebook post permalink; group-search links are not allowed")
+        kwargs["lead_cards"] = cards
     
     subject, html = render(template_name, email=args.email, **kwargs)
     
