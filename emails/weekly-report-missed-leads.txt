@@ -1,5 +1,5 @@
 {subject}
-Your Byron Bay electrician report — {report_date}
+Leads you may have missed — {report_date}
 {/subject}
 
 {body}

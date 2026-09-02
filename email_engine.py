@@ -91,7 +91,7 @@ def send(to_email: str, subject: str, html: str) -> bool:
 # ── CLI ──────────────────────────────────────────────────────
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="LeadDrop Email Engine")
-    parser.add_argument("template", choices=["welcome", "lead", "admin-signup", "telegram-setup", "weekly-report", "weekly-report-empty"])
+    parser.add_argument("template", choices=["welcome", "lead", "admin-signup", "telegram-setup", "weekly-report", "weekly-report-missed-leads"])
     parser.add_argument("--email", required=True, help="Recipient email")
     parser.add_argument("--name", default="", help="Customer name")
     parser.add_argument("--business", default="", help="Business name")
