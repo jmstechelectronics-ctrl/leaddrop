@@ -141,7 +141,7 @@ if __name__ == "__main__":
     parser.add_argument("--fresh-permalink-cards-file", default="", help="HTML cards for new leads with exact Facebook post links")
     parser.add_argument("--fresh-other-cards-file", default="", help="HTML cards for new leads without a direct permalink")
     parser.add_argument("--missed-lead-cards-file", default="", help="HTML cards for older local leads worth revisiting")
-    parser.add_argument("--upgrade-url", default="mailto:info@leaddrop.com.au?subject=LeadDrop%20Premium%20upgrade", help="LeadDrop Premium upgrade URL")
+    parser.add_argument("--upgrade-url", default="https://leaddrop.com.au/light/#profile-builder", help="LeadDrop Premium upgrade URL")
     parser.add_argument("--dry-run", action="store_true", help="Print HTML, don't send")
 
     args = parser.parse_args()
