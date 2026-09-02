@@ -7,4 +7,11 @@ Your weekly local lead report — {report_date}
 <p style="color:#c7c7c2;font-size:16px;line-height:1.6;margin:0 0 28px;">Here are the verified local service requests we found in your area. Each lead opens the exact original Facebook post.</p>
 
 {report_sections}
+
+<div style="background:#24200f;border:1px solid #6d5b12;border-radius:10px;padding:24px 20px;margin:8px 0 0;text-align:center;">
+  <p style="color:#eab308;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px;">LeadDrop Premium</p>
+  <h2 style="color:#f0f0ec;font-size:21px;line-height:1.25;margin:0 0 10px;">Want new leads within the hour?</h2>
+  <p style="color:#d8d4c3;font-size:15px;line-height:1.55;margin:0 0 18px;">Upgrade to LeadDrop Premium and receive matching local requests as they are identified, rather than waiting for the weekly report.</p>
+  <a href="{upgrade_url}" style="display:inline-block;background:#eab308;border-radius:6px;color:#171717;font-size:14px;font-weight:700;padding:11px 16px;text-decoration:none;">Upgrade to LeadDrop Premium</a>
+</div>
 {/body}
